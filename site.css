@@ -776,7 +776,7 @@ code { font: 600 .85em/1 var(--font-mono); background: var(--soft); border: 1px 
   -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent); mask-image: linear-gradient(to bottom, #000 62%, transparent); }
 .board-col { display: grid; gap: 12px; }
 .bc { border: 1px solid var(--line); border-radius: 12px; background: var(--bg); overflow: hidden; font-size: 12px; box-shadow: 0 24px 48px -30px color-mix(in srgb, var(--c) 45%, transparent); }
-.bc-top { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: color-mix(in srgb, var(--accent-1) 10%, transparent); border-bottom: 1px solid var(--line); }
+.bc-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 12px; background: color-mix(in srgb, var(--accent-1) 10%, transparent); border-bottom: 1px solid var(--line); }
 .bc-top b { color: var(--accent-1-ink); font-weight: 700; }
 .bc-top span { min-width: 0; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bc-top em { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-style: normal; font-weight: 600; white-space: nowrap; color: var(--accent-4-ink); }
