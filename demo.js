@@ -205,6 +205,23 @@
     <div class="ctx" id="dctx" role="menu" hidden></div>`;
   const status = stage.querySelector('.ed-status');
 
+  // ---------------------------------------------------------------- phones
+  // A phone can't fit the panel, the chat and the terminal together, so it shows one at a
+  // time and slides to wherever the action is. The visitor watches; the cursor drives.
+  const phone = matchMedia('(max-width: 700px)');
+  const edTop = stage.querySelector('.ed-top');
+  edTop.insertAdjacentHTML('beforeend', '<div class="mnav" aria-hidden="true"><span data-v="side">Panel</span><span data-v="main">Editor</span><span data-v="term">Terminal</span></div>');
+  const setView = (v) => {
+    demo.dataset.mview = v;
+    edTop.querySelectorAll('.mnav span').forEach((x) => x.classList.toggle('on', x.dataset.v === v));
+  };
+  const viewOf = (el) => (el.closest('.lb') ? 'side' : el.closest('#dterm') ? 'term' : 'main');
+  const lockForPhone = () => {
+    stage.classList.toggle('locked', phone.matches);
+    if (phone.matches) demo.setAttribute('aria-hidden', 'true'); else demo.removeAttribute('aria-hidden');
+  };
+  lockForPhone();
+
   let toastTimer = null;
   const toast = (msg) => {
     const t = $('#dtoast');
@@ -599,6 +616,7 @@
     if (!S.docs.includes(key)) S.docs.push(key);
     S.active = key;
     drawEditor(true);
+    setView('main');
     if (key.startsWith('chat:')) drawChats();
   };
   const closeDoc = (key) => {
@@ -659,7 +677,7 @@
     if (focused && c && focused === c.id) { const i = t.querySelector('[data-cc]'); if (i && !i.disabled) { i.value = typed; i.focus(); } }
   };
   const termFor = (id) => S.terms.findIndex((x) => x.chat === id);
-  const newTerm = (name, chatId, cmd, pre) => { S.terms.push({ name, chat: chatId, cmd, pre, notes: [] }); S.termActive = S.terms.length - 1; S.termOpen = true; drawTerm(); };
+  const newTerm = (name, chatId, cmd, pre) => { S.terms.push({ name, chat: chatId, cmd, pre, notes: [] }); S.termActive = S.terms.length - 1; S.termOpen = true; drawTerm(); setView('term'); };
   const skip = () => (S.cfg.skipPermissions ? ' --dangerously-skip-permissions' : '');
   const resume = (id) => {
     const c = chat(id);
@@ -668,9 +686,8 @@
     if (target === 'desktop') { toast(`Opening Claude Desktop · <code>claude://resume?session=${c.id}</code>`); return; }
     const at = termFor(id);
     if (at >= 0) {
-      S.termActive = at; S.termOpen = true; drawTerm();
+      S.termActive = at; S.termOpen = true; drawTerm(); setView('term');
       $('#dterm').classList.remove('flash'); void $('#dterm').offsetWidth; $('#dterm').classList.add('flash');
-      toast('Already running. Jumped to its terminal instead of starting a second copy.');
       return;
     }
     c.live = 'wait'; c.mem = '380 MB'; c.cpu = '1%'; c.ago = 0;
@@ -785,6 +802,7 @@
   const VIEWS = { chats: drawChats, card: drawCard, digest: drawDigest, memory: drawMemory, settings: drawSettings };
   const setTab = (tab) => {
     S.tab = tab;
+    setView('side');
     $$('.lb-tab').forEach((b) => { b.classList.toggle('on', b.dataset.tab === tab); b.setAttribute('aria-selected', b.dataset.tab === tab); });
     $$('.lb-view').forEach((v) => v.classList.toggle('on', v.dataset.view === tab));
     $('[data-act="refresh"]').hidden = tab !== 'chats';
@@ -837,8 +855,8 @@
     else if (d.copytext) { navigator.clipboard && navigator.clipboard.writeText(d.copytext).catch(() => {}); t.textContent = 'Copied'; setTimeout(() => { t.textContent = 'Copy'; }, 1200); }
     else if (d.dash) { S.dash = d.dash; drawEditor(); }
     else if (d.dashdays) { S.dashDays = Number(d.dashdays); drawEditor(); }
-    else if (d.term) { S.termActive = Number(d.term); drawTerm(); }
-    else if (d.termclose !== undefined) { S.termOpen = false; drawTerm(); }
+    else if (d.term) { S.termActive = Number(d.term); drawTerm(); setView('term'); }
+    else if (d.termclose !== undefined) { S.termOpen = false; drawTerm(); setView('main'); }
   });
   demo.addEventListener('change', (e) => {
     const t = e.target, d = t.dataset;
@@ -928,18 +946,24 @@
     }
     if (!el) return 1200;
     const run = st.run || ((x) => x.click());
-    const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
-    youCur.style.left = r.left - s.left + Math.min(r.width * 0.5, 120) + 'px';
-    youCur.style.top = r.top - s.top + r.height * 0.55 + 'px';
-    setTimeout(() => { if (tour) el.classList.add('hov'); }, 700);
+    // On a phone, slide to the screen the target lives on first, then travel to it
+    const shift = phone.matches && demo.dataset.mview !== viewOf(el) ? 450 : 0;
+    if (shift) setView(viewOf(el));
+    setTimeout(() => {
+      if (!tour) return;
+      const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
+      youCur.style.left = r.left - s.left + Math.min(r.width * 0.5, 120) + 'px';
+      youCur.style.top = r.top - s.top + r.height * 0.55 + 'px';
+    }, shift);
+    setTimeout(() => { if (tour) el.classList.add('hov'); }, 700 + shift);
     setTimeout(() => {
       el.classList.remove('hov');
       if (!tour || !el.isConnected) return;
       touring = true; run(el); touring = false;
       stage.classList.remove('picked');
       youCur.classList.add('clicking'); setTimeout(() => youCur.classList.remove('clicking'), 250);
-    }, 1300);
-    return st.wait;
+    }, 1300 + shift);
+    return st.wait + shift;
   };
   function stopTour () {
     if (touring) return;
@@ -967,6 +991,7 @@
     window.addEventListener('scroll', () => {
       if (!tour && !pointerInside()) { stage.classList.remove('user-in'); resumeSoon(); }
     }, { passive: true });
+    phone.addEventListener('change', () => { lockForPhone(); setView(S.termOpen ? 'term' : 'side'); stopTour(); startTour(); });
     new IntersectionObserver(([e]) => {
       onScreen = e.isIntersecting;
       if (onScreen) startTour(); else stopTour();

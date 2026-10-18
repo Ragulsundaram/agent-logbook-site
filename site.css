@@ -158,6 +158,9 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.035em; margin:
 .ed-dots { display: flex; gap: 7px; }
 .ed-dots i { width: 11px; height: 11px; border-radius: 50%; }
 .ed-dots i:nth-child(1) { background: #ff5f57; } .ed-dots i:nth-child(2) { background: #febc2e; } .ed-dots i:nth-child(3) { background: #28c840; }
+.mnav { display: none; margin-left: auto; gap: 2px; padding: 2px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); }
+.mnav span { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--ink-2); transition: background .3s var(--ease), color .3s var(--ease); }
+.mnav span.on { background: var(--accent-1); color: #fff; }
 .ed-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 500; color: var(--ink-2); white-space: nowrap; }
 .ed-body { position: relative; display: grid; grid-template-columns: 48px 300px minmax(0, 1fr); height: 580px; background: var(--bg); }
 
@@ -982,13 +985,28 @@ footer.site nav a:hover { color: var(--ink); }
   .works-sep { display: none; }
 }
 @media (max-width: 700px) {
-  .ed-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 440px 460px; height: auto; }
-  .lb { border-right: 0; border-bottom: 1px solid var(--line); }
+  /* One screen at a time: the panel, the editor or the terminal, whichever the cursor is using */
+  .ed-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 540px; height: auto; overflow: hidden; }
+  .ed-body > .lb, .ed-body > .main { grid-area: 1 / 1; min-width: 0; border-right: 0; background: var(--bg); transition: transform .4s var(--ease), opacity .4s var(--ease); }
+  .ed-body > .lb { background: color-mix(in srgb, var(--soft) 55%, var(--bg)); }
+  .ed-body:not([data-mview="side"]) > .lb { transform: translateX(-14%); opacity: 0; visibility: hidden; }
+  .ed-body[data-mview="side"] > .main { transform: translateX(14%); opacity: 0; visibility: hidden; }
+  .ed-body[data-mview="term"] > .main > .etabs, .ed-body[data-mview="term"] > .main > .panes { display: none; }
+  .ed-body[data-mview="term"] .term { height: 100%; animation: none; }
+  .ed-body:not([data-mview="term"]) .term { display: none; }
+  .mnav { display: flex; }
   .ed-title { display: none; }
   .dacts .dbtn.primary span { display: none; }
   .dbtn.primary { padding: 0 8px; }
   .ed-status > span:nth-child(2) { display: none; }
 }
+/* On a phone the demo plays itself: taps go to the page (so it still scrolls), not the demo */
+.stage.locked #demo { pointer-events: none; user-select: none; }
+.stage.locked .ctx { display: none; }
+.demo-badge .on-phone { display: none; }
+.stage.locked .demo-badge .on-hover, .stage.locked .demo-badge .on-touch { display: none; }
+.stage.locked .demo-badge .on-phone { display: inline; }
+.stage.locked.picked .demo-badge { opacity: 1; }
 @media (max-width: 600px) {
   .wrap { padding: 0 16px; }
   .nav .wrap { gap: 12px; }
