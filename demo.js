@@ -833,18 +833,31 @@
     ['.lb-tab[data-tab="chats"]', (el) => el.click()],
     ['.lb-open[data-open="4f2a9c1e"]', (el) => el.click()],
   ];
-  let tour = null, step = 0, idle = null, touring = false;
+  let tour = null, step = 0, idle = null, touring = false, onScreen = false;
+  // Where the real pointer is. A mouse that the page scrolls away from never fires
+  // pointerleave, so "is it still over the demo?" is answered from its last position.
+  let px = null, py = null, kind = 'mouse';
+  const pointerInside = () => {
+    if (kind !== 'mouse' || px === null) return false;
+    const r = demo.getBoundingClientRect();
+    return px >= r.left && px <= r.right && py >= r.top && py <= r.bottom;
+  };
   const tourStep = () => {
-    const [q, run] = STEPS[step++ % STEPS.length];
-    const el = $(q);
-    if (!el || !el.getClientRects().length) return;
+    // Skip steps whose target the visitor has hidden (a search, a collapsed folder), so the cursor never stalls
+    let el = null, run = null;
+    for (let tries = 0; tries < STEPS.length && !el; tries++) {
+      const [q, fn] = STEPS[step++ % STEPS.length];
+      const found = $(q);
+      if (found && found.getClientRects().length) { el = found; run = fn; }
+    }
+    if (!el) return;
     const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
     youCur.style.left = r.left - s.left + Math.min(r.width * 0.5, 120) + 'px';
     youCur.style.top = r.top - s.top + r.height * 0.55 + 'px';
     setTimeout(() => { if (tour) el.classList.add('hov'); }, 700);
     setTimeout(() => {
       el.classList.remove('hov');
-      if (!tour) return;
+      if (!tour || !el.isConnected) return;
       touring = true; run(el); touring = false;
       stage.classList.remove('picked');
       youCur.classList.add('clicking'); setTimeout(() => youCur.classList.remove('clicking'), 250);
@@ -856,12 +869,27 @@
     stage.classList.remove('touring');
     $$('.hov').forEach((x) => x.classList.remove('hov'));
   }
-  const startTour = () => { if (tour) return; stage.classList.add('touring'); tourStep(); tour = setInterval(tourStep, 2800); };
+  const startTour = () => {
+    if (tour || !onScreen || pointerInside()) return;
+    stage.classList.remove('user-in');
+    stage.classList.add('touring'); tourStep(); tour = setInterval(tourStep, 2800);
+  };
+  // The visitor has the demo while they're in it; the tour picks up again shortly after they leave.
+  // A tap has no "leave", so on touch screens it waits longer before taking over again.
+  const resumeSoon = () => { clearTimeout(idle); idle = setTimeout(startTour, kind === 'mouse' ? 1200 : 8000); };
   if (!reduced) {
-    demo.addEventListener('pointerenter', (e) => { stopTour(); if (e.pointerType === 'mouse') stage.classList.add('user-in'); });
-    demo.addEventListener('pointerleave', () => { stage.classList.remove('user-in'); clearTimeout(idle); idle = setTimeout(startTour, 6000); });
-    demo.addEventListener('pointerdown', stopTour);
+    document.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; kind = e.pointerType; }, { passive: true });
+    demo.addEventListener('pointerenter', (e) => { kind = e.pointerType; stopTour(); if (kind === 'mouse') stage.classList.add('user-in'); });
+    demo.addEventListener('pointerleave', () => { stage.classList.remove('user-in'); resumeSoon(); });
+    demo.addEventListener('pointerdown', (e) => { kind = e.pointerType; stopTour(); if (kind !== 'mouse') resumeSoon(); });
     demo.addEventListener('focusin', () => { if (!touring) stopTour(); });
-    new IntersectionObserver(([e]) => { if (e.isIntersecting) startTour(); else stopTour(); }, { threshold: 0.4 }).observe(demo);
+    document.addEventListener('pointerleave', () => { px = null; resumeSoon(); });
+    window.addEventListener('scroll', () => {
+      if (!tour && !pointerInside()) { stage.classList.remove('user-in'); resumeSoon(); }
+    }, { passive: true });
+    new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      if (onScreen) startTour(); else stopTour();
+    }, { threshold: 0.4 }).observe(demo);
   }
 })();
