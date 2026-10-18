@@ -162,7 +162,7 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.035em; margin:
 .mnav span { padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--ink-2); transition: background .3s var(--ease), color .3s var(--ease); }
 .mnav span.on { background: var(--accent-1); color: #fff; }
 .ed-title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 500; color: var(--ink-2); white-space: nowrap; }
-.ed-body { position: relative; display: grid; grid-template-columns: 48px 300px minmax(0, 1fr); height: 580px; background: var(--bg); }
+.ed-body { position: relative; display: grid; grid-template-columns: 48px 300px minmax(0, 1fr); height: 580px; background: var(--bg); contain: layout; }
 
 .ed-act { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0; border-right: 1px solid var(--line); background: var(--soft); color: color-mix(in srgb, var(--ink-2) 70%, transparent); }
 .ed-act span { position: relative; width: 48px; height: 40px; display: grid; place-items: center; }
@@ -379,7 +379,7 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.035em; margin:
 .pane.swap > * { animation: row-in .3s var(--ease) backwards; }
 .empty-ed { flex: 1; display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--ink-2); font-size: 13px; }
 .empty-ed .ic { width: 48px; height: 48px; stroke-width: 1.2; opacity: .4; }
-.dhead { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); font-size: 13px; }
+.dhead { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--bg); font-size: 13px; }
 .dtitle { flex: 1; min-width: 0; display: grid; }
 .dtitle b, .dtitle span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dtitle span { font-size: 11px; color: var(--ink-2); }
@@ -446,13 +446,14 @@ button.diff:hover { border-color: var(--ink-2); }
 /* The runner, from media/style.css: it walks there and back while Claude is working */
 .runstrip { position: absolute; left: 0; right: 0; bottom: 100%; display: flex; align-items: center; gap: 10px; padding: 6px 16px 4px; pointer-events: none; background: linear-gradient(to bottom, transparent, var(--bg) 45%); }
 .runtrack { position: relative; flex: 1; height: 22px; overflow: hidden; border-bottom: 1px dashed var(--line); }
-.runner { position: absolute; bottom: 1px; left: 0; width: 21px; height: 21px; animation: runacross 7s linear infinite alternate; }
-.runface { width: 100%; height: 100%; animation: face 14s steps(1) infinite; }
+/* Spans the track minus one sprite, so translateX(100%) lands the sprite at the far end without animating layout */
+.runner { position: absolute; bottom: 1px; left: 0; right: 22px; height: 21px; animation: runacross 7s linear infinite alternate; }
+.runface { width: 21px; height: 100%; animation: face 14s steps(1) infinite; }
 .runsprite { width: 100%; height: 100%; display: block; animation: bob .3s steps(2) infinite; }
 .runsprite .legs.b { visibility: hidden; }
 .runsprite .legs.a { animation: legA .3s steps(1) infinite; }
 .runsprite .legs.b { animation: legB .3s steps(1) infinite; }
-@keyframes runacross { from { left: 0; } to { left: calc(100% - 22px); } }
+@keyframes runacross { from { transform: translateX(0); } to { transform: translateX(100%); } }
 @keyframes face { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
 @keyframes legA { 0% { visibility: visible; } 50% { visibility: hidden; } }
 @keyframes legB { 0% { visibility: hidden; } 50% { visibility: visible; } }
@@ -544,8 +545,10 @@ button.diff:hover { border-color: var(--ink-2); }
 .cursor { position: absolute; display: flex; align-items: flex-start; gap: 2px; pointer-events: none; z-index: 7; transition: opacity .2s var(--ease); }
 .cursor svg { width: 22px; height: 22px; fill: var(--accent-1); transition: transform .12s var(--ease); }
 .cursor span { margin-top: 16px; color: #fff; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 8px; white-space: nowrap; background: var(--accent-1); }
-.cursor.you { left: 22%; top: 70%; opacity: 0; }
-.stage.touring .cursor.you { opacity: 1; transition: left .8s var(--ease), top .8s var(--ease), opacity .2s var(--ease); }
+.cursor.you { left: 0; top: 0; opacity: 0; will-change: transform; }
+.stage.touring .cursor.you { opacity: 1; transition: transform .8s var(--ease), opacity .2s var(--ease); }
+/* Nothing in the demo animates while it is scrolled out of view */
+.stage.offscreen *, .stage.offscreen *::before, .stage.offscreen *::after { animation-play-state: paused !important; }
 .cursor.you.clicking svg { transform: scale(.82); }
 .stage.user-in .cursor.you { opacity: 0; }
 .demo-badge {

@@ -902,6 +902,9 @@
   // ---------------------------------------------------------------- guided tour
   // Until the visitor touches the demo, the "You" cursor shows a few features in turn.
   const youCur = stage.querySelector('.cursor.you');
+  // Moved with transform, not left/top, so its glide never re-lays out the page
+  const moveCur = (x, y) => { youCur.style.transform = `translate(${x}px, ${y}px)`; };
+  { const s = stage.getBoundingClientRect(); moveCur(s.width * 0.22, s.height * 0.7); }
   const TOUR_CHAT = 'c9e04b17';
   const TOUR_MSG = 'Add a test for the 429.';
   let typedOnce = false;
@@ -952,8 +955,7 @@
     setTimeout(() => {
       if (!tour) return;
       const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
-      youCur.style.left = r.left - s.left + Math.min(r.width * 0.5, 120) + 'px';
-      youCur.style.top = r.top - s.top + r.height * 0.55 + 'px';
+      moveCur(r.left - s.left + Math.min(r.width * 0.5, 120), r.top - s.top + r.height * 0.55);
     }, shift);
     setTimeout(() => { if (tour) el.classList.add('hov'); }, 700 + shift);
     setTimeout(() => {
@@ -992,6 +994,7 @@
       if (!tour && !pointerInside()) { stage.classList.remove('user-in'); resumeSoon(); }
     }, { passive: true });
     phone.addEventListener('change', () => { lockForPhone(); setView(S.termOpen ? 'term' : 'side'); stopTour(); startTour(); });
+    new IntersectionObserver(([e]) => stage.classList.toggle('offscreen', !e.isIntersecting)).observe(stage);
     new IntersectionObserver(([e]) => {
       onScreen = e.isIntersecting;
       if (onScreen) startTour(); else stopTour();
