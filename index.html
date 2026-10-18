@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Logbook: every Claude Code and Codex chat, in your editor</title>
+  <meta name="description" content="Agent Logbook is a free VS Code and Cursor extension that lets you browse, search, resume and measure the Claude Code and Codex chats already on your laptop. Nothing is uploaded.">
+  <meta property="og:title" content="Agent Logbook: every agent chat, in your editor">
+  <meta property="og:description" content="Browse, search and resume your Claude Code and Codex chats. See what they cost and which ones need you. Free, and nothing leaves your laptop.">
+  <meta property="og:image" content="https://ragulsundaram.github.io/agent-logbook-site/icon.png">
+  <link rel="canonical" href="https://ragulsundaram.github.io/agent-logbook-site/">
+  <link rel="icon" href="icon.png">
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="icon.png" alt="">Agent Logbook</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#what">What it does</a>
+      <a href="#how">How it works</a>
+      <a href="#live">Live chats</a>
+      <a href="#features">Features</a>
+      <a href="#faq">Help</a>
+    </nav>
+    <div class="get-menu">
+      <button class="btn solid sm" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="get-menu-list">Get it free<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="get-menu-list" id="get-menu-list" role="menu" hidden>
+        <a role="menuitem" href="https://marketplace.visualstudio.com/items?itemName=ragulsundaram.agent-logbook" target="_blank" rel="noopener"><img src="images/logos/vscode.svg" alt="" width="24" height="24"><span><strong>VS Code</strong><small>Visual Studio Marketplace</small></span></a>
+        <a role="menuitem" href="https://open-vsx.org/extension/ragulsundaram/agent-logbook" target="_blank" rel="noopener"><img class="mono" src="images/logos/cursor.svg" alt="" width="24" height="24"><span><strong>Cursor, Windsurf, VSCodium</strong><small>Open VSX</small></span></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="wrap">
+      <div class="eyebrow"><i></i>Free for VS Code, Cursor and Windsurf</div>
+      <h1>Every chat. One <span class="hl">logbook</span>.</h1>
+      <p class="lede">Browse, search and resume the Claude Code and Codex chats already on your laptop. See what each one cost, and which ones need you right now.</p>
+      <div class="cta-row">
+        <a class="btn solid" href="#get">Add it to your editor</a>
+        <a class="btn" href="#how">See how it works</a>
+      </div>
+      <p class="platforms">No account needed. Your chats never leave your laptop.</p>
+
+      <!-- The demo: rows are real buttons and the search box really filters. Chat names and numbers are made up. -->
+      <div class="stage" role="group" aria-label="Interactive preview of the Agent Logbook panel">
+        <div class="demo-badge" aria-hidden="true"><i class="pulse"></i><span class="on-hover">It all works: click, right-click, try every tab</span><span class="on-touch">It all works: tap around</span></div>
+        <div class="ed">
+          <div class="ed-top" aria-hidden="true">
+            <div class="ed-dots"><i></i><i></i><i></i></div>
+            <span class="ed-title">billing-api</span>
+          </div>
+          <div class="ed-body" id="demo">
+            <div class="ed-act" aria-hidden="true">
+              <span><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span>
+              <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span>
+              <span><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="7" r="2"/><path d="M6 7v10M18 9c0 5-12 3-12 8"/></svg></span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><path d="M17.25 3v7.5M13.5 6.75H21"/></svg></span>
+              <span class="on"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><path d="M21 3v5h-5"/><path d="M12 7v5l3 2"/></svg></span>
+            </div>
+
+            <aside class="lb" aria-label="Chat list">
+              <div class="lb-head" aria-hidden="true"><span>Agent Logbook</span><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></div>
+              <div class="q" aria-hidden="true">
+                <div class="q-row"><b>5h</b><span class="q-bar"><i style="width:38%"></i></span><em>38%</em></div>
+                <div class="q-row flag"><b>7d</b><span class="q-bar"><i style="width:31%"></i></span><em>31%</em></div>
+              </div>
+              <div class="q-nudge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>7d resets in 9h with 69% left</div>
+              <div class="lb-tabs" aria-hidden="true">
+                <span class="on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M7 15v-3M11 15V9M15 15v-5"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>
+              </div>
+              <label class="lb-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/></svg><input id="demo-q" type="search" placeholder="Search chats, folders or messages…" aria-label="Search the demo chats" autocomplete="off"></label>
+              <div class="lb-list" id="demo-list">
+                <div class="lb-group" data-group="billing-api"><span>billing-api</span><span>3</span></div>
+                <button type="button" class="lb-row on" data-id="flaky" data-group="billing-api"><i class="dot busy"></i><strong>Fix the flaky login test</strong><small>$1.84</small></button>
+                <button type="button" class="lb-row" data-id="queue" data-group="billing-api"><i class="dot wait"></i><strong>Move nightly jobs to a queue</strong><small>$4.10</small></button>
+                <button type="button" class="lb-row" data-id="limits" data-group="billing-api"><i class="dot"></i><strong>Add rate limits to /export</strong><small>$0.92</small></button>
+                <div class="lb-group" data-group="marketing-site"><span>marketing-site</span><span>2</span></div>
+                <button type="button" class="lb-row" data-id="pricing" data-group="marketing-site"><i class="dot"></i><strong>Rewrite the pricing page copy</strong><small>$0.37</small></button>
+                <button type="button" class="lb-row" data-id="dark" data-group="marketing-site"><i class="dot"></i><strong>Dark mode for the docs</strong><small>$2.26</small></button>
+                <div class="lb-group" data-group="mobile-app"><span>mobile-app</span><span>1</span></div>
+                <button type="button" class="lb-row" data-id="crash" data-group="mobile-app"><i class="dot"></i><strong>Crash on cold start <span class="src">codex</span></strong><small>$1.12</small></button>
+                <p class="lb-empty" id="demo-empty" hidden>No chats match.</p>
+              </div>
+            </aside>
+
+            <div class="chat" aria-live="polite">
+              <div class="chat-tabs"><div class="chat-tab"><img src="icon.png" alt=""><span id="demo-title">Fix the flaky login test</span><span class="x" aria-hidden="true">×</span></div></div>
+              <div class="chat-body" id="demo-body">
+                <p class="msg you">The login test fails about one run in five. Find out why and fix it.</p>
+                <span class="tool">Ran 3 commands</span>
+                <p class="msg">The test reads the session before the cookie is written, so it only passes when the write wins the race.</p>
+                <div class="diff"><header><span>auth.test.ts</span><em><span class="p">+2</span> <span class="m">−1</span></em></header><div class="del">-  const session = getSession()</div><div class="add">+  await cookieWritten(page)</div><div class="add">+  const session = getSession()</div></div>
+                <p class="msg">Ran it 50 times in a row. No failures.</p>
+              </div>
+              <div class="chat-foot" id="demo-foot"><b>Claude</b><span>38% of 200K</span><span>cache 91%</span><span>$1.84</span><i></i><b>Laptop</b><span>412 MB</span><span>3% CPU</span><span class="run"><i class="dot busy"></i>Working</span></div>
+            </div>
+          </div>
+          <div class="ed-status" aria-hidden="true"><span>⎇ main</span><span>⊗ 0  ⚠ 0</span><span class="st-quota" hidden></span></div>
+        </div>
+        <div class="cursor you" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 2l18 8-8 2.5L10 21z"/></svg><span>You</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Works with: the agents it reads and the editors it runs in -->
+  <div class="works">
+    <div class="wrap works-row">
+      <div class="works-group">
+        <small>Reads</small>
+        <ul>
+          <li><img src="images/logos/claude.svg" alt="" width="28" height="28">Claude Code</li>
+          <li><img class="mono" src="images/logos/openai.svg" alt="" width="28" height="28">Codex</li>
+        </ul>
+      </div>
+      <span class="works-sep" aria-hidden="true"></span>
+      <div class="works-group">
+        <small>Runs in</small>
+        <ul>
+          <li><img src="images/logos/vscode.svg" alt="" width="28" height="28">VS Code</li>
+          <li><img class="mono" src="images/logos/cursor.svg" alt="" width="28" height="28">Cursor</li>
+          <li><img class="mono" src="images/logos/windsurf.svg" alt="" width="28" height="28">Windsurf</li>
+          <li><img src="images/logos/vscodium.svg" alt="" width="28" height="28">VSCodium</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- What it does -->
+  <section id="what">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="kicker">What it does</div>
+        <h2>Read it. Resume it. Measure it.</h2>
+        <p>Every chat Claude Code and Codex saved on your laptop, shown the way you saw it, one click from running again.</p>
+      </div>
+      <div class="modes">
+        <article class="mode read">
+          <div class="mode-top"><span class="tag">read</span></div>
+          <div class="mode-art" aria-hidden="true">
+            <div class="mr-chat">
+              <span class="you"></span>
+              <span class="tool">Ran 3 commands</span>
+              <span class="ln" style="width:84%"></span>
+              <div class="diff"><header><span>queue.ts</span><em><span class="p">+12</span> <span class="m">−4</span></em></header><div class="del">-  cron.schedule('0 2 * * *', run)</div><div class="add">+  queue.add('nightly', { retry: 3 })</div></div>
+            </div>
+          </div>
+          <div class="mode-txt">
+            <h3>Every chat, as you saw it</h3>
+            <p>Markdown, images, tool calls folded into one line, and the diff each edit made. Grouped by project.</p>
+          </div>
+        </article>
+        <article class="mode resume">
+          <div class="mode-top"><span class="tag">resume</span></div>
+          <div class="mode-art" aria-hidden="true">
+            <div class="mt-term">
+              <div class="mt-tabs"><span>zsh</span><span class="on">Fix the flaky login test</span></div>
+              <div class="mt-body">
+                <b>claude --resume 4f2a9c1e</b>
+                <em>↳ Already running. Jumped to its terminal.</em>
+                <span></span><span style="width:46%"></span>
+              </div>
+            </div>
+          </div>
+          <div class="mode-txt">
+            <h3>Pick it back up</h3>
+            <p>Resume in a terminal, the Claude Code extension or Claude Desktop. If it's already running, you land on that terminal.</p>
+          </div>
+        </article>
+        <article class="mode measure">
+          <div class="mode-top"><span class="tag">measure</span></div>
+          <div class="mode-art" aria-hidden="true">
+            <div class="mm-card">
+              <small>Spend at API prices · 30 days</small>
+              <strong>$214.60</strong>
+              <div class="mm-bars"><b style="height:30%"></b><b style="height:52%"></b><b style="height:40%"></b><b style="height:74%"></b><b style="height:58%"></b><b style="height:22%"></b><b style="height:66%"></b><b style="height:90%"></b><b style="height:48%"></b><b style="height:62%"></b><b style="height:36%"></b><b style="height:80%"></b></div>
+              <div class="mm-models"><span>opus 58%</span><span>sonnet 36%</span><span>haiku 6%</span></div>
+            </div>
+          </div>
+          <div class="mode-txt">
+            <h3>Know what it cost</h3>
+            <p>Tokens, spend at API prices, cache hits and active time, for one chat or your whole history.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="kicker">How it works</div>
+        <h2>Three steps. Nothing to set up.</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <div class="step-art" aria-hidden="true"><div class="art-stage s1">
+            <div class="s1-win">
+              <div class="s1-head"><img src="icon.png" alt=""><div><strong>Agent Logbook</strong><span></span></div></div>
+              <span class="s1-btn"><span class="go">Install</span><span class="done">Installed ✓</span></span>
+              <div class="s1-lines"><i></i><i></i></div>
+            </div>
+            <svg class="mcur" viewBox="0 0 16 20"><path d="M1.5 1.5v15l4-3.8 2.7 6 2.6-1.1-2.6-5.9h5.6z"/></svg>
+          </div></div>
+          <div class="step-txt">
+            <h3>Install it</h3>
+            <p>From the VS Code Marketplace, or Open VSX if you use Cursor, Windsurf or VSCodium.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div class="step-art" aria-hidden="true"><div class="art-stage s2">
+            <div class="s2-win">
+              <div class="s2-act"><i></i><i></i><span class="lb-ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><path d="M21 3v5h-5"/><path d="M12 7v5l3 2"/></svg></span><i></i></div>
+              <div class="s2-list"><small>billing-api</small><div><i></i><span></span></div><div><i></i><span></span></div><div><i></i><span></span></div><div><i></i><span></span></div></div>
+            </div>
+            <svg class="mcur" viewBox="0 0 16 20"><path d="M1.5 1.5v15l4-3.8 2.7 6 2.6-1.1-2.6-5.9h5.6z"/></svg>
+          </div></div>
+          <div class="step-txt">
+            <h3>Your chats are already there</h3>
+            <p>Click the logbook in the activity bar. It reads what Claude Code and Codex already keep in <code>~/.claude</code> and <code>~/.codex</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div class="step-art" aria-hidden="true"><div class="art-stage s3">
+            <div class="s3-win">
+              <div class="s3-row">Move nightly jobs to a queue<span>Resume</span></div>
+              <div class="s3-term"><b>claude --resume 7b31d0aa</b><i></i><i></i></div>
+            </div>
+            <svg class="mcur" viewBox="0 0 16 20"><path d="M1.5 1.5v15l4-3.8 2.7 6 2.6-1.1-2.6-5.9h5.6z"/></svg>
+          </div></div>
+          <div class="step-txt">
+            <h3>Pick one back up</h3>
+            <p>Open a chat to read it, or hit Resume. Branch starts a new chat from an old one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live chats board -->
+  <section id="live">
+    <div class="wrap">
+      <div class="panel" id="board-panel">
+        <div>
+          <div class="kicker">Live chats</div>
+          <h2>Which chat needs you? One look.</h2>
+          <p class="lede">One tab with a card for every chat running in this window. See which are working and which are waiting, and what each one said last, without opening any of them.</p>
+          <ul class="ticks">
+            <li>Working or waiting for you, at a glance</li>
+            <li>Your last ask and the latest reply, with a copy button</li>
+            <li>The card with the newest message rises to the top</li>
+            <li>This window's chats, or every window, set in Settings</li>
+          </ul>
+        </div>
+        <div class="panel-art" aria-hidden="true">
+          <div class="board" id="board">
+            <div class="board-col">
+              <div class="bc busy"><div class="bc-top"><b>Claude</b><span>billing-api</span><em><i class="dot busy"></i>Working</em></div><div class="bc-body"><strong>Fix the flaky login test</strong><p><b>You:</b> Find out why it fails one run in five.</p><i></i><i></i><span class="bc-copy">Copy</span></div></div>
+              <div class="bc"><div class="bc-top"><b>Claude</b><span>marketing-site</span><em><i class="dot wait"></i>Waiting for you</em></div><div class="bc-body"><strong>Dark mode for the docs</strong><p><b>You:</b> Match the app's dark palette.</p><i></i><i></i><span class="bc-copy">Copy</span></div></div>
+              <div class="bc"><div class="bc-top"><b>Claude</b><span>billing-api</span><em><i class="dot wait"></i>Waiting for you</em></div><div class="bc-body"><strong>Add rate limits to /export</strong><p><b>You:</b> 60 a minute per key is fine.</p><i></i><i></i><span class="bc-copy">Copy</span></div></div>
+            </div>
+            <div class="board-col">
+              <div class="bc"><div class="bc-top"><b>Claude</b><span>billing-api</span><em><i class="dot wait"></i>Waiting for you</em></div><div class="bc-body"><strong>Move nightly jobs to a queue</strong><p><b>You:</b> Keep the retry rules.</p><p>Seven jobs moved. Should the two that share a lock run in order?</p><span class="bc-copy">Copy</span></div></div>
+              <div class="bc busy"><div class="bc-top"><b>Claude</b><span>mobile-app</span><em><i class="dot busy"></i>Working</em></div><div class="bc-body"><strong>Profile the image cache</strong><p><b>You:</b> Why does scrolling stutter?</p><i></i><i></i><span class="bc-copy">Copy</span></div></div>
+              <div class="bc"><div class="bc-top"><b>Claude</b><span>marketing-site</span><em><i class="dot wait"></i>Waiting for you</em></div><div class="bc-body"><strong>Rewrite the pricing page copy</strong><p><b>You:</b> Shorter. No exclamation marks.</p><i></i><i></i><span class="bc-copy">Copy</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use it or lose it -->
+  <section id="quota">
+    <div class="wrap">
+      <div class="panel amber" id="quota-panel">
+        <div>
+          <div class="kicker">Use it or lose it</div>
+          <h2>Spend your quota before it resets.</h2>
+          <p class="lede">Plan-usage bars sit across the top of the panel. When a window is about to reset with plenty left, or is on course to run out early, Agent Logbook says so.</p>
+          <ul class="ticks">
+            <li>Claude's 5-hour and weekly windows, and Codex's</li>
+            <li>Flagged under the bars, on the live board and in the status bar</li>
+            <li>Pick the bars, their colours and the thresholds in Settings</li>
+          </ul>
+        </div>
+        <div class="panel-art" aria-hidden="true">
+          <div class="quota">
+            <header><span>Plan usage</span><span>Settings → Quota bars</span></header>
+            <div class="qr"><span>Claude · 5h</span><span class="bar"><b style="width:38%"></b></span><em>38%</em><small>Resets in 2h 10m</small></div>
+            <div class="qr flag"><span>Claude · 7d</span><span class="bar"><b style="width:31%"></b></span><em>31%</em><small>Resets in 9h · 69% left</small></div>
+            <div class="qr"><span>Opus · 7d</span><span class="bar"><b style="width:12%"></b></span><em>12%</em><small>Resets in 9h</small></div>
+            <div class="qr codex"><span>Codex · 5h</span><span class="bar"><b style="width:54%"></b></span><em>54%</em><small>Resets in 3h 40m</small></div>
+            <div class="q-flag"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Weekly resets in 9h with 69% left. Use it or lose it.</div>
+          </div>
+          <div class="q-status"><span>Ln 42, Col 7</span><span>UTF-8</span><b><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Claude 7d · 69% left</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="kicker">Features</div>
+        <h2>Small panel. Lots inside.</h2>
+        <p>The things you reach for after a long day of agent work, each one a click from the chat list.</p>
+      </div>
+      <div class="feats">
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><g class="lens"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g><path d="M8.5 9.5h5M8.5 12.5h3.5"/></svg></span>
+          <h3>Search every message</h3>
+          <p>Full text across every transcript, not just titles. Results stream in chat by chat.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.5"/><path class="draw" pathLength="1" d="M6 7.5V11a2 2 0 0 0 2 2h7"/><path class="draw" pathLength="1" d="M6 11v6a2 2 0 0 0 2 2h7"/><circle cx="17.5" cy="13" r="2.5"/><circle cx="17.5" cy="19" r="2.5"/></svg></span>
+          <h3>Sub-agents as threads</h3>
+          <p>Background agents show where they were launched, with their brief and report, and open as their own chat.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle class="tip" cx="18" cy="7" r="2"/><path d="M6 7v10"/><path class="draw" pathLength="1" d="M18 9c0 5-12 3-12 8"/></svg></span>
+          <h3>Branch with a brief</h3>
+          <p>Start a fresh chat from an old one with a written handover, instead of dragging the whole context along.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path class="pv" d="M12 4v16"/><path class="ph" d="M12 12h9"/></svg></span>
+          <h3>Chats in fixed spots</h3>
+          <p>Halves, thirds, a grid or the terminal panel. Move any chat from the right-click menu.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"/><path class="needle" d="M12 17l4-5"/><path d="M3 20h18"/></svg></span>
+          <h3>Laptop resources</h3>
+          <p>Memory and CPU per running chat, plus leftover commands from ended chats, with a Stop button.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path class="b1" d="M8 15v-3"/><path class="b2" d="M12 15V9"/><path class="b3" d="M16 15v-5"/></svg></span>
+          <h3>A card to share</h3>
+          <p>A PNG of your usage for a day, a week or all time, sized for X and Slack. No project names unless you add them.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path class="mark" d="M10 4v5l2-1.5L14 9V4"/></svg></span>
+          <h3>Memory and instructions</h3>
+          <p>Read and search the memory notes and CLAUDE.md files your agents load at the start of every session.</p>
+        </article>
+        <article class="feat">
+          <span class="fi"><svg viewBox="0 0 24 24"><path class="pencil" d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg></span>
+          <h3>Rename everywhere</h3>
+          <p>Rename a chat and the running session and its terminal tab change with it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="privacy-band" id="privacy">
+    <div class="wrap">
+      <div class="panel sage">
+        <div>
+          <div class="kicker">Private by default</div>
+          <h2>Your chats stay on your laptop.</h2>
+          <p class="lede">Agent Logbook reads the transcript files already on your machine. There's no account, no server of its own and no analytics.</p>
+          <ul class="ticks">
+            <li>Transcripts are read from disk and never uploaded</li>
+            <li>One request of its own: your plan usage, the same one Claude Code makes</li>
+            <li>Deleting a chat moves it to a trash folder; nothing is wiped</li>
+            <li>Branch with a brief runs Claude on your plan, only when you click it</li>
+          </ul>
+          <p class="more"><a href="privacy.html">See everything it reads and writes →</a></p>
+        </div>
+        <div class="panel-art" aria-hidden="true">
+          <div class="lock">
+            <i></i><i></i><i></i>
+            <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.3"/></svg>
+            <em>On-device</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Get it -->
+  <section id="get">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="kicker">Get Agent Logbook</div>
+        <h2>Works where you code.</h2>
+      </div>
+      <div class="stores">
+        <a href="https://marketplace.visualstudio.com/items?itemName=ragulsundaram.agent-logbook" target="_blank" rel="noopener">
+          <span class="head"><img class="ico" src="images/logos/vscode.svg" alt="" width="32" height="32"><strong>VS Code</strong></span>
+          <span>VS Code 1.94 or later</span>
+          <span class="go">Visual Studio Marketplace →</span>
+        </a>
+        <a href="https://open-vsx.org/extension/ragulsundaram/agent-logbook" target="_blank" rel="noopener">
+          <span class="head"><img class="ico mono" src="images/logos/cursor.svg" alt="" width="32" height="32"><strong>Cursor and others</strong></span>
+          <span>Cursor, Windsurf, VSCodium and other editors that install from Open VSX</span>
+          <span class="go">Open VSX →</span>
+        </a>
+        <a href="https://github.com/Ragulsundaram/agent-logbook" target="_blank" rel="noopener">
+          <span class="head"><img class="ico mono" src="images/logos/github.svg" alt="" width="32" height="32"><strong>GitHub</strong></span>
+          <span>Changelog, issues and requests</span>
+          <span class="go">Ragulsundaram/agent-logbook →</span>
+        </a>
+      </div>
+      <p class="requires-line">Needs Claude Code or Codex on the same laptop. Resume needs <code>claude</code> or <code>codex</code> on your PATH.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="kicker">Help</div>
+        <h2>Questions, answered.</h2>
+      </div>
+      <div class="faq faq-list">
+        <details>
+          <summary>Does it upload my chats anywhere?</summary>
+          <div class="answer"><p>No. It reads the transcript files on your laptop and keeps its own cache next to them in <code>~/.claude</code>. There's no account, no server of its own and no analytics. The only request it makes by itself is for your plan usage, explained below.</p></div>
+        </details>
+        <details>
+          <summary>Why does it read my Claude login?</summary>
+          <div class="answer"><p>To draw the quota bars. It asks Anthropic for your current plan usage with the same request Claude Code makes, using the token Claude Code already stored: the macOS Keychain, or <code>~/.claude/.credentials.json</code> on Linux and Windows. The token is never saved or sent anywhere else.</p></div>
+        </details>
+        <details>
+          <summary>Which editors does it work in?</summary>
+          <div class="answer"><p>VS Code 1.94 or later, and editors built on it: Cursor, Windsurf, VSCodium and the rest. Install from the Visual Studio Marketplace in VS Code, or from Open VSX in the others.</p></div>
+        </details>
+        <details>
+          <summary>Do I need Claude Code or Codex installed?</summary>
+          <div class="answer"><p>It shows the chats they've already saved, so you need at least one of them. Resuming a chat needs <code>claude</code> (or <code>codex</code>) on your PATH.</p></div>
+        </details>
+        <details>
+          <summary>Is the cost what I actually paid?</summary>
+          <div class="answer"><p>No. It's what the same tokens would cost at API list prices. On a Pro or Max plan you pay the plan price, so the number shows how much use you get out of it.</p></div>
+        </details>
+        <details>
+          <summary>Does it change my chat files?</summary>
+          <div class="answer"><p>Only in two ways, both on purpose. Renaming a Claude chat adds a title line to its transcript, which is how Claude Code reads the new name. Deleting a chat moves the file to <code>~/.claude/trashed-sessions</code> instead of wiping it. Everything else it writes is its own cache and settings. <a href="privacy.html">The full list is here.</a></p></div>
+        </details>
+        <details>
+          <summary>Does the live board show Codex chats?</summary>
+          <div class="answer"><p>Not yet. Codex chats are listed, read, searched and resumed alongside Claude's, but live status (the dots and the board) covers Claude chats for now.</p></div>
+        </details>
+        <details>
+          <summary>Something's broken. Where do I report it?</summary>
+          <div class="answer"><p>Open an issue on <a href="https://github.com/Ragulsundaram/agent-logbook/issues" target="_blank" rel="noopener">GitHub</a>, or email <a href="mailto:ragulsundaram15@gmail.com">ragulsundaram15@gmail.com</a>. Your editor name and version help.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closer -->
+  <div class="closer">
+    <div class="wrap">
+      <div class="box">
+        <span class="blob a"></span><span class="blob b"></span><span class="blob c"></span>
+        <h2>Every chat, one click away.</h2>
+        <p>Free, private, and already full of your chats.</p>
+        <div class="cta-row">
+          <a class="btn solid" href="#get">Get Agent Logbook</a>
+          <a class="btn" href="https://github.com/Ragulsundaram/agent-logbook/issues" target="_blank" rel="noopener">Report an issue</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="icon.png" alt="">Agent Logbook</a>
+    <span>© 2026 Ragul Sundaram</span>
+    <nav aria-label="Footer">
+      <a href="#faq">Help</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://github.com/Ragulsundaram/agent-logbook/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+      <a href="https://github.com/Ragulsundaram/agent-logbook/issues" target="_blank" rel="noopener">Issues</a>
+      <a href="mailto:ragulsundaram15@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Sticky nav border once the page scrolls.
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Live board: every few seconds a chat gets a new message and its card rises to the top of its column.
+  const board = document.getElementById('board');
+  if (!reduced) {
+    const cols = [...board.querySelectorAll('.board-col')];
+    const setState = (card, busy) => {
+      card.classList.toggle('busy', busy);
+      card.querySelector('.bc-top em').innerHTML = busy ? '<i class="dot busy"></i>Working' : '<i class="dot wait"></i>Waiting for you';
+    };
+    let turn = 0, timer = null;
+    const tick = () => {
+      const visibleCols = cols.filter((c) => c.offsetParent);
+      const col = visibleCols[turn++ % visibleCols.length];
+      const top = col.firstElementChild, last = col.lastElementChild;
+      setState(top, false);
+      setState(last, true);
+      col.prepend(last);
+      last.classList.remove('arrive'); void last.offsetWidth; last.classList.add('arrive');
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { if (!timer) timer = setInterval(tick, 3200); }
+      else { clearInterval(timer); timer = null; }
+    }, { threshold: 0.4 }).observe(board);
+  }
+
+  // Quota bars fill once the panel scrolls into view.
+  const quotaPanel = document.getElementById('quota-panel');
+  if (!reduced) {
+    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { quotaPanel.classList.add('play'); io.disconnect(); } }, { threshold: 0.4 }).observe(quotaPanel);
+  }
+
+  // Feature cards: a soft spotlight follows the pointer.
+  document.querySelector('.feats').addEventListener('pointermove', (e) => {
+    const card = e.target.closest('.feat');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    card.style.setProperty('--my', `${e.clientY - r.top}px`);
+  });
+
+  // Steps play by themselves, one after another, while they're on screen.
+  // Side by side they take turns; stacked on a phone, the one in view plays.
+  if (!reduced) {
+    const stepsEl = document.querySelector('.steps');
+    const steps = [...stepsEl.querySelectorAll('.step')];
+    const stacked = matchMedia('(max-width: 900px)');
+    let turn = 0, timer = null;
+    const play = (s) => {
+      steps.forEach((el) => el.classList.remove('play'));
+      void s.offsetWidth; // restart the animation even if it's the same card
+      s.classList.add('play');
+    };
+    const next = () => { play(steps[turn]); turn = (turn + 1) % steps.length; timer = setTimeout(next, 3600); };
+    const stop = () => { clearTimeout(timer); timer = null; steps.forEach((el) => el.classList.remove('play')); };
+    new IntersectionObserver(([e]) => {
+      if (stacked.matches) return;
+      if (e.isIntersecting) { if (!timer) next(); } else stop();
+    }, { threshold: 0.4 }).observe(stepsEl);
+    const stepIo = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      if (!stacked.matches) return;
+      if (isIntersecting) play(target); else target.classList.remove('play');
+    }), { threshold: 0.6 });
+    steps.forEach((el) => stepIo.observe(el));
+    stacked.addEventListener('change', () => { stop(); turn = 0; });
+  }
+
+  // Feature cards light up under a mouse. Touch never sets them, so a tap mid-scroll can't leave one stuck on.
+  const feats = document.querySelectorAll('.feat');
+  feats.forEach((el) => {
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') el.classList.add('play'); });
+    el.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') el.classList.remove('play'); });
+  });
+  // Without hover, the card crossing the middle of the screen lights up, so they follow the scroll in order.
+  if (matchMedia('(hover: none)').matches && !reduced) {
+    const io = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      target.classList.toggle('play', isIntersecting);
+    }), { rootMargin: '-45% 0px -45% 0px' });
+    feats.forEach((el) => io.observe(el));
+  }
+</script>
+<script src="demo.js"></script>
+<script src="get-menu.js"></script>
+<script src="faq.js"></script>
+</body>
+</html>
