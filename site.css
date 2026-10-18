@@ -619,22 +619,24 @@ code { font: 600 .85em/1 var(--font-mono); background: var(--soft); border: 1px 
 .mode:hover .mr-chat > :nth-child(3) { animation-delay: .16s; }
 .mode:hover .mr-chat > :nth-child(4) { animation-delay: .24s; }
 
-/* Resume: the terminal already running the chat comes forward */
-.mt-term { position: absolute; left: 40px; top: 36px; width: 380px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); overflow: hidden; }
-.mt-tabs { display: flex; gap: 4px; padding: 8px 10px 0; border-bottom: 1px solid var(--line); }
-.mt-tabs span { padding: 7px 12px; border-radius: 8px 8px 0 0; font-size: 11.5px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
-.mt-tabs span.on { background: var(--bg); color: var(--ink); box-shadow: inset 0 2px 0 var(--c); }
-.mt-tabs span.on::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--accent-1); }
-.mt-body { display: grid; gap: 8px; padding: 16px; background: var(--bg); font: 500 12px/1.5 var(--font-mono); color: var(--ink-2); }
-.mt-body b { color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; }
-.mt-body b::before { content: "$ "; color: var(--c); }
-.mt-body em { font-style: normal; color: var(--c); }
-.mt-body span { display: block; height: 7px; width: 70%; border-radius: 4px; background: var(--soft); }
-.mode:hover .mt-body b { animation: type .9s steps(26) backwards; }
-.mode:hover .mt-body em { animation: row-in .4s var(--ease) .9s backwards; }
-.mode:hover .mt-tabs span.on { animation: flash .9s var(--ease) .9s; }
-@keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-@keyframes flash { 40% { background: color-mix(in srgb, var(--c) 18%, var(--bg)); } }
+/* Resume: one button, and a picker for where the chat reopens */
+.mt-card { position: absolute; left: 40px; top: 28px; width: 380px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); padding: 14px; display: grid; gap: 10px; }
+.mt-head { display: flex; align-items: center; gap: 10px; }
+.mt-head strong { min-width: 0; font-size: 12.5px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-split { display: flex; border-radius: 8px; overflow: hidden; background: var(--c); color: var(--bg); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.mt-split span { padding: 6px 10px; }
+.mt-split .pick { border-left: 1px solid color-mix(in srgb, var(--bg) 35%, transparent); padding: 6px 8px; }
+.mt-menu { justify-self: start; width: 230px; display: grid; gap: 2px; padding: 6px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); font-size: 12px; }
+.mt-menu div { display: flex; align-items: baseline; gap: 8px; padding: 5px 10px; border-radius: 6px; color: var(--ink-2); }
+.mt-menu span { flex: 1; font-weight: 600; }
+.mt-menu .on { background: color-mix(in srgb, var(--c) 14%, var(--bg)); color: var(--ink); }
+.mt-menu .on span::before { content: "✓ "; color: var(--c); }
+.mode:hover .mt-menu div { animation: row-in .4s var(--ease) backwards; }
+.mode:hover .mt-menu div:nth-child(2) { animation-delay: .06s; }
+.mode:hover .mt-menu div:nth-child(3) { animation-delay: .12s; }
+.mode:hover .mt-menu div:nth-child(4) { animation-delay: .18s; }
+.mode:hover .mt-split .run { animation: flash .9s var(--ease) .4s; }
+@keyframes flash { 40% { filter: brightness(1.25); } }
 
 /* Measure: spend at API prices over a month */
 .mm-card { position: absolute; left: 40px; top: 36px; width: 360px; display: grid; gap: 12px; padding: 18px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); }
