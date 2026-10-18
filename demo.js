@@ -67,40 +67,49 @@
   // ---------------------------------------------------------------- data
   const you = (text) => ({ t: 'you', text });
   const ai = (text) => ({ t: 'ai', text });
-  const tool = (text) => ({ t: 'tool', text });
+  // A folded tool line ("Ran 2 commands") and the calls behind it, which the terminal prints one by one
+  const tool = (text, calls) => ({ t: 'tool', text, calls });
   const diff = (file, add, del, lines) => ({ t: 'diff', file, add, del, lines });
   const CHATS = [
     { id: '4f2a9c1e', title: 'Fix the flaky login test', folder: 'billing-api', src: 'claude', live: 'busy', cost: 1.84, msgs: 14, ago: 1, model: 'opus', ctx: '38% of 200K', cache: 91, mem: '412 MB', cpu: '3%',
       words: 'session cookie race auth test', ask: 'Find out why it fails one run in five.', reply: 'Ran it 50 times in a row. No failures.',
-      blocks: [you('The login test fails about one run in five. Find out why and fix it.'), tool('Ran 3 commands'),
+      blocks: [you('The login test fails about one run in five. Find out why and fix it.'),
+        tool('Ran 2 commands', [['Bash', 'npm test -- auth.test.ts --repeat 20', 'Tests: 4 failed, 16 passed'], ['Bash', 'grep -rn "setCookie" src/auth', 'src/auth/login.ts:31:  setCookie(res, token)']]),
         ai('The test reads the session before the cookie is written, so it only passes when the write wins the race.'),
         diff('auth.test.ts', 2, 1, ['-  const session = getSession()', '+  await cookieWritten(page)', '+  const session = getSession()']),
+        tool('Ran 1 command', [['Bash', 'npm test -- auth.test.ts --repeat 50', 'Tests: 50 passed']]),
         ai('Ran it 50 times in a row. No failures.')] },
     { id: '7b31d0aa', title: 'Move nightly jobs to a queue', folder: 'billing-api', src: 'claude', live: 'wait', cost: 4.10, msgs: 31, ago: 12, model: 'opus', ctx: '61% of 200K', cache: 88, mem: '690 MB', cpu: '1%',
       words: 'cron retry lock jobs queue', ask: 'Keep the retry rules.', reply: 'Seven jobs moved. Should the two that share a lock run in order?',
-      agent: { name: 'Find every cron entry', brief: 'List every cron job in the repo: file, schedule, and anything it locks or retries.', report: 'Found 7 jobs in 3 files. reconcile and invoices share the billing lock; the rest are independent.', tools: 'Read 9 files · Ran 2 commands', cost: 0.21 },
-      blocks: [you('Move the nightly cron jobs onto the queue. Keep the retry rules.'), tool('Read 9 files'), { t: 'agent' },
+      agent: { name: 'Find every cron entry', brief: 'List every cron job in the repo: file, schedule, and anything it locks or retries.', report: 'Found 7 jobs in 3 files. reconcile and invoices share the billing lock; the rest are independent.', tools: 'Read 9 files · Ran 2 commands', uses: 11, cost: 0.21 },
+      blocks: [you('Move the nightly cron jobs onto the queue. Keep the retry rules.'),
+        tool('Read 3 files', [['Read', 'jobs/nightly.ts', 'Read 112 lines'], ['Read', 'jobs/reconcile.ts', 'Read 64 lines'], ['Read', 'lib/queue.ts', 'Read 88 lines']]),
+        { t: 'agent' },
         diff('jobs/nightly.ts', 12, 4, ["-  cron.schedule('0 2 * * *', runNightly)", "+  queue.add('nightly', payload, { retry: 3 })"]),
         ai('Seven jobs moved. Should the two that share a lock run in order?')] },
     { id: 'c9e04b17', title: 'Add rate limits to /export', folder: 'billing-api', src: 'claude', live: '', cost: 0.92, msgs: 9, ago: 60 * 26, model: 'sonnet', ctx: '22% of 200K', cache: 84,
       words: 'rate limit export api key 429', ask: '60 a minute per key is fine.', reply: 'Requests over the limit get a 429 with a Retry-After header.',
-      blocks: [you('Add a rate limit to /export. 60 a minute per API key is fine.'), tool('Ran 2 commands'),
-        diff('routes/export.ts', 6, 0, ["+  router.use('/export', limit({ perMinute: 60, by: 'apiKey' }))"]),
+      blocks: [you('Add a rate limit to /export. 60 a minute per API key is fine.'),
+        tool('Ran 2 commands', [['Bash', 'npm install express-rate-limit', 'added 1 package in 2s'], ['Bash', 'npm test -- export', 'Tests: 12 passed']]),
+        diff('routes/export.ts', 1, 0, ["+  router.use('/export', limit({ perMinute: 60, by: 'apiKey' }))"]),
         ai('Done. Requests over the limit get a 429 with a Retry-After header.')] },
     { id: '2d8f6a30', title: 'Rewrite the pricing page copy', folder: 'marketing-site', src: 'claude', live: '', cost: 0.37, msgs: 6, ago: 60 * 50, model: 'sonnet', ctx: '9% of 200K', cache: 76,
       words: 'pricing copy marketing words', ask: 'Shorter. No exclamation marks.', reply: "Each plan now leads with who it's for.",
       blocks: [you('Rewrite the pricing page copy. Shorter. No exclamation marks.'),
         ai("Cut it from 410 words to 160. Each plan now leads with who it's for."),
-        diff('pricing.md', 9, 31, ['-  Supercharge your team!', '+  For teams of up to ten.'])] },
+        diff('pricing.md', 1, 1, ['-  Supercharge your team!', '+  For teams of up to ten.'])] },
     { id: 'a51c7e92', title: 'Dark mode for the docs', folder: 'marketing-site', src: 'claude', live: '', cost: 2.26, msgs: 18, ago: 60 * 75, model: 'opus', ctx: '47% of 200K', cache: 90,
       words: 'dark mode theme docs css palette', ask: "Match the app's dark palette.", reply: "Code blocks use the app's dark theme.",
-      blocks: [you("Add dark mode to the docs. Match the app's dark palette."), tool('Ran 4 commands'), tool('Edited 6 files'),
+      blocks: [you("Add dark mode to the docs. Match the app's dark palette."),
+        tool('Ran 2 commands', [['Bash', 'grep -rn "--color-" app/theme.css | head', '24 colour tokens'], ['Bash', 'npm run docs:build', 'Built 46 pages in 3.1s']]),
+        tool('Edited 3 files', [['Update', 'docs/theme.css', 'Updated docs/theme.css with 41 additions'], ['Update', 'docs/code.css', 'Updated docs/code.css with 12 additions and 3 removals'], ['Update', 'docs/layout.html', 'Updated docs/layout.html with 1 addition']]),
         ai("The docs now follow the system setting. Code blocks use the app's dark theme.")] },
     { id: '019e3f5d', title: 'Crash on cold start', folder: 'mobile-app', src: 'codex', live: '', cost: 1.12, msgs: 11, ago: 60 * 98, model: 'gpt-5-codex', ctx: '18% of 272K', cache: 79,
       words: 'ios crash startup image cache', ask: 'It crashes on a cold start about half the time.', reply: 'It now waits for setup to finish.',
-      blocks: [you('The iOS app crashes on a cold start about half the time.'), tool('Ran 5 commands'),
+      blocks: [you('The iOS app crashes on a cold start about half the time.'),
+        tool('Ran 2 commands', [['Bash', 'xcrun simctl launch booted com.example.app', 'crashed: EXC_BAD_ACCESS in ImageCache.warm()'], ['Bash', 'swift test', 'Executed 38 tests, with 0 failures']]),
         ai("The image cache is read before it's created on first launch. It now waits for setup to finish."),
-        diff('AppDelegate.swift', 3, 1, ['-  ImageCache.shared.warm()', '+  await ImageCache.shared.ready()'])] },
+        diff('AppDelegate.swift', 1, 1, ['-  ImageCache.shared.warm()', '+  await ImageCache.shared.ready()'])] },
   ];
   // A chat running in another editor window, shown on the board only when "every window" is on
   const ELSEWHERE = { id: 'e77b2c04', title: 'Profile the image cache', folder: 'mobile-app', src: 'claude', live: 'busy', cost: 0.64, msgs: 5, ago: 3, other: true,
@@ -143,8 +152,8 @@
   const S = {
     tab: 'chats', filter: 'all', source: 'all', q: '', archivedOpen: {}, collapsed: {},
     docs: [], active: null, split: null, splitMode: 'right-half',
-    terms: [{ name: 'Fix the flaky login test', chat: '4f2a9c1e', lines: [['cmd', 'claude --resume 4f2a9c1e'], ['dim', 'Claude Code · billing-api'], ['dim', '✻ Working…']] },
-      { name: 'Move nightly jobs to a queue', chat: '7b31d0aa', lines: [['cmd', 'claude --resume 7b31d0aa'], ['dim', 'Claude Code · billing-api'], ['dim', '> Waiting for your reply']] }],
+    terms: [{ name: 'Fix the flaky login test', chat: '4f2a9c1e', cmd: 'claude --resume 4f2a9c1e', notes: [] },
+      { name: 'Move nightly jobs to a queue', chat: '7b31d0aa', cmd: 'claude --resume 7b31d0aa', notes: [] }],
     termOpen: false, termActive: 0,
     leftover: { cmd: 'npm run dev', from: 'Dark mode for the docs', mb: 210, cpu: '0.4%' },
     range: 7, opts: { cost: true, tiles: true, models: true, chart: true, names: false },
@@ -510,7 +519,7 @@
   const blockHTML = (c, b) => {
     if (b.t === 'you') return `<p class="msg you">${esc(b.text)}</p>`;
     if (b.t === 'ai') return `<p class="msg">${esc(b.text)}</p>`;
-    if (b.t === 'tool') return `<span class="tool">${esc(b.text)}</span>`;
+    if (b.t === 'tool') return `<button type="button" class="tool${b.open ? ' open' : ''}" data-fold="${c.id}:${c.blocks.indexOf(b)}" aria-expanded="${!!b.open}">${esc(b.text)}</button>${b.open ? `<div class="calls">${b.calls.map(([k, a, o]) => `<p><b>${k}</b><code>${esc(a)}</code>${o ? `<span>${esc(o)}</span>` : ''}</p>`).join('')}</div>` : ''}`;
     if (b.t === 'diff') return `<button type="button" class="diff" data-diff="${esc(b.file)}" title="Open in the diff view"><header><span>${esc(b.file)}</span><em><span class="p">+${b.add}</span> <span class="m">−${b.del}</span></em></header>${b.lines.map((l) => `<span class="${l[0] === '+' ? 'add' : 'del'}">${esc(l)}</span>`).join('')}</button>`;
     if (b.t === 'agent') return `<button type="button" class="agent-card" data-agent="${c.id}">${icon('agent')}<span><b>Agent · ${esc(c.agent.name)}</b><span>${esc(c.agent.report)}</span><small>${esc(c.agent.tools)} · ${money(c.agent.cost)} · open thread →</small></span></button>`;
     return '';
@@ -529,7 +538,7 @@
         ${inSplit ? `<button type="button" class="dbtn" data-unsplit title="Close this split">${icon('close')}</button>` : ''}
       </div>
     </div>
-    <div class="chat-body">${c.blocks.map((b) => blockHTML(c, b)).join('')}</div>
+    <div class="chat-body">${c.blocks.length ? c.blocks.map((b) => blockHTML(c, b)).join('') : '<p class="msg none">No messages yet. Type in its terminal and they show up here as you send them.</p>'}</div>
     ${footer(c)}`;
   const bars = (vals, max, cls = '') => `<div class="minibars ${cls}">${vals.map((v) => `<i style="height:${Math.max(2, v / max * 100)}%"></i>`).join('')}</div>`;
   const DOCS = {
@@ -598,7 +607,8 @@
     if (S.active === key) S.active = S.docs[Math.max(0, i - 1)] || null;
     drawEditor(true); drawChats();
   };
-  const drawEditor = (swap) => {
+  const drawEditor = (swap, follow) => {
+    const keep = $$('#dpanes > .pane').map((x) => x.scrollTop);
     S.docs = S.docs.filter((k) => docOf(k));
     $('#detabs').innerHTML = S.docs.map((k) => { const d = docOf(k); return `<div class="etab${k === S.active ? ' on' : ''}"><button type="button" role="tab" aria-selected="${k === S.active}" data-tab-doc="${esc(k)}">${icon(d.icon)}<span>${esc(d.title)}</span></button><button type="button" class="x" data-close-doc="${esc(k)}" aria-label="Close ${esc(d.title)}">×</button></div>`; }).join('');
     const main = S.active ? docOf(S.active) : null;
@@ -607,19 +617,49 @@
     const panes = $('#dpanes');
     panes.className = 'panes' + (split ? ' split ' + (mode.rows > 1 && mode.cols === 1 ? 'stack' : S.splitMode) : '');
     panes.innerHTML = `<div class="pane${swap ? ' swap' : ''}">${main ? main.html : `<div class="empty-ed">${icon('logbook')}<p>Open a chat from the list</p></div>`}</div>${split ? `<div class="pane">${chatDoc(split, true)}</div>` : ''}`;
+    $$('#dpanes > .pane').forEach((x, i) => { x.scrollTop = follow ? x.scrollHeight : swap ? 0 : (keep[i] || 0); });
   };
 
   // ---------------------------------------------------------------- terminals
+  // A terminal running a chat draws it the way Claude Code does, from the same blocks as
+  // the chat view: what you see in one is what you see in the other.
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+  const tui = (c, term) => {
+    const banner = c.src === 'codex'
+      ? `<div class="cc-banner codex"><b>&gt;_ OpenAI Codex</b><span>model: ${esc(c.model)}</span><span>directory: ~/code/${esc(c.folder)}</span></div>`
+      : `<div class="cc-banner"><b><span class="cc-star">✻</span> Welcome to Claude Code!</b><span>/help for help, /status for your current setup</span><span>cwd: ~/code/${esc(c.folder)}</span></div>`;
+    const call = (k, arg, out) => `<p class="cc-call"><i>⏺</i><span><b>${esc(k)}</b>(${esc(arg)})</span></p>${out ? `<p class="cc-out"><i>⎿</i>${esc(out)}</p>` : ''}`;
+    const lines = c.blocks.map((b) => {
+      if (b.t === 'you') return `<p class="cc-you">&gt; ${esc(b.text)}</p>`;
+      if (b.t === 'ai') return `<p class="cc-ai"><i>⏺</i>${esc(b.text)}</p>`;
+      if (b.t === 'tool') return b.calls.map(([k, a, o]) => call(k, a, o)).join('');
+      if (b.t === 'diff') return call('Update', b.file, `Updated ${b.file} with ${plural(b.add, 'addition')}${b.del ? ` and ${plural(b.del, 'removal')}` : ''}`) +
+        `<div class="cc-diff">${b.lines.map((l, i) => `<span class="${l[0] === '+' ? 'add' : 'del'}"><em>${12 + i}</em>${esc(l)}</span>`).join('')}</div>`;
+      if (b.t === 'agent') return call('Task', c.agent.name, `Done (${c.agent.uses} tool uses · ${money(c.agent.cost)})`);
+      return '';
+    }).join('');
+    const notes = term.notes.map((n) => `<p class="cc-you">&gt; ${esc(n)}</p>`).join('');
+    const busy = c.live === 'busy';
+    return `${banner}${lines}${notes}${busy ? '<p class="cc-work"><span class="cc-spin">✻</span> Working… <span>(esc to interrupt)</span></p>' : ''}
+      <label class="cc-input"><span>&gt;</span><input data-cc="${c.id}" autocomplete="off" aria-label="Message ${c.src === 'codex' ? 'Codex' : 'Claude'} in this terminal" placeholder="${busy ? 'Claude is working…' : 'Type a message. It shows up in the chat view too.'}"${busy ? ' disabled' : ''}></label>
+      <p class="cc-hint">? for shortcuts</p>`;
+  };
   const drawTerm = () => {
     const t = $('#dterm');
     t.hidden = !S.termOpen;
     if (!S.termOpen) return;
+    const focused = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.cc;
+    const typed = focused ? document.activeElement.value : '';
     const cur = S.terms[S.termActive];
-    t.innerHTML = `<div class="term-tabs"><span class="term-h">Terminal</span>${S.terms.map((x, i) => `<button type="button" class="${i === S.termActive ? 'on' : ''}" data-term="${i}">${x.chat ? icon('sparkle', 'spark') : icon('terminal')}<span>${esc(x.name)}</span></button>`).join('')}<button type="button" class="lb-ib term-x" data-termclose aria-label="Close panel">${icon('close')}</button></div>
-      <div class="term-body">${cur.lines.map(([k, l]) => (k === 'cmd' ? `<p><b>$</b> ${esc(l)}</p>` : `<p class="${k}">${esc(l)}</p>`)).join('')}<p><b>$</b> <i class="caret"></i></p></div>`;
+    const c = chat(cur.chat);
+    t.innerHTML = `<div class="term-tabs"><span class="term-h">Terminal</span>${S.terms.map((x, i) => `<button type="button" class="${i === S.termActive ? 'on' : ''}" data-term="${i}">${chat(x.chat) && chat(x.chat).src === 'codex' ? '<i class="codex-mark"></i>' : icon('sparkle', 'spark')}<span>${esc(x.name)}</span></button>`).join('')}<button type="button" class="lb-ib term-x" data-termclose aria-label="Close panel">${icon('close')}</button></div>
+      <div class="term-body">${(cur.pre || []).map((l) => `<p class="dim">${esc(l)}</p>`).join('')}<p><b>$</b> ${esc(cur.cmd)}</p>${c ? tui(c, cur) : ''}</div>`;
+    const body = t.querySelector('.term-body');
+    body.scrollTop = body.scrollHeight;
+    if (focused && c && focused === c.id) { const i = t.querySelector('[data-cc]'); if (i && !i.disabled) { i.value = typed; i.focus(); } }
   };
   const termFor = (id) => S.terms.findIndex((x) => x.chat === id);
-  const newTerm = (name, chatId, lines) => { S.terms.push({ name, chat: chatId, lines }); S.termActive = S.terms.length - 1; S.termOpen = true; drawTerm(); };
+  const newTerm = (name, chatId, cmd, pre) => { S.terms.push({ name, chat: chatId, cmd, pre, notes: [] }); S.termActive = S.terms.length - 1; S.termOpen = true; drawTerm(); };
   const skip = () => (S.cfg.skipPermissions ? ' --dangerously-skip-permissions' : '');
   const resume = (id) => {
     const c = chat(id);
@@ -633,10 +673,24 @@
       toast('Already running. Jumped to its terminal instead of starting a second copy.');
       return;
     }
-    const cmd = c.src === 'codex' ? `codex resume ${c.id}` : `claude --resume ${c.id}${skip()}`;
-    newTerm(c.title, id, [['cmd', cmd], ['dim', `${c.src === 'codex' ? 'Codex' : 'Claude Code'} · ${c.folder} · ${c.msgs} messages restored`], ['dim', '> Waiting for your reply']]);
     c.live = 'wait'; c.mem = '380 MB'; c.cpu = '1%'; c.ago = 0;
+    newTerm(c.title, id, c.src === 'codex' ? `codex resume ${c.id}` : `claude --resume ${c.id}${skip()}`);
     drawChats(); drawEditor(); drawQuota();
+  };
+  // Typing in a terminal writes to the transcript, and the chat view follows it, as the extension's file watch does
+  const REPLY = "This is the website demo, so no real Claude answers here. In your editor, Claude's reply lands in the terminal and in this chat view at the same moment.";
+  const redrawLive = (id) => {
+    drawTerm(); drawChats();
+    if (S.active === 'chat:' + id || S.split === id) drawEditor(false, true);
+    else if (S.active === 'board') drawEditor();
+  };
+  const sendFromTerm = (id, text) => {
+    const c = chat(id);
+    if (!c || !text.trim() || c.live === 'busy') return;
+    c.blocks.push(you(text.trim())); c.msgs++; c.live = 'busy'; c.ask = text.trim(); c.ago = 0;
+    if (!c.mem) { c.mem = '380 MB'; c.cpu = '2%'; }
+    redrawLive(id);
+    setTimeout(() => { c.blocks.push(ai(REPLY)); c.msgs++; c.live = 'wait'; c.reply = REPLY; redrawLive(id); }, 2200);
   };
   const addChat = (title, folder, live, blocks) => {
     const c = { id: hex(), title, folder, src: 'claude', live, cost: 0, msgs: 0, ago: 0, model: 'opus', ctx: '2% of 200K', cache: 0, mem: '240 MB', cpu: '2%', words: '', ask: '', reply: 'Waiting for your first message.', blocks };
@@ -689,7 +743,7 @@
       if (keep && v && v !== c.title) {
         c.title = v;
         const at = termFor(id);
-        if (at >= 0) { S.terms[at].name = v; if (c.live) S.terms[at].lines.push(['dim', `/rename ${v}`]); }
+        if (at >= 0) { S.terms[at].name = v; if (c.live) S.terms[at].notes.push(`/rename ${v}`); }
         toast(c.live ? 'Renamed the transcript, the running session and its terminal tab' : 'Renamed');
       }
       drawChats(); drawEditor(); drawTerm();
@@ -716,14 +770,14 @@
     open('brief:' + id);
     const n = addChat(`Brief: ${c.title}`, c.folder, 'busy', [{ t: 'you', text: `Read the brief at ~/.claude/chistory-briefs/${slug(c.title)}.md, then carry on.` }]);
     n.ask = 'Read the brief, then carry on.'; n.reply = 'Reading the brief…';
-    newTerm(n.title, n.id, [['dim', 'Writing a brief with claude -p…'], ['cmd', `claude --session-id ${n.id}${skip()}`], ['dim', `> Read the brief at ~/.claude/chistory-briefs/${slug(c.title)}.md`], ['dim', '✻ Working…']]);
+    newTerm(n.title, n.id, `claude --session-id ${n.id}${skip()}`, [`Writing a brief from “${c.title}” with claude -p…`, `Saved ~/.claude/chistory-briefs/${slug(c.title)}.md`]);
     drawChats();
   };
   const branch = (id) => {
     const c = chat(id);
-    const n = addChat(`Branch of ${c.title}`, c.folder, 'wait', c.blocks.slice());
+    const n = addChat(`Branch of ${c.title}`, c.folder, 'wait', c.blocks.map((b) => ({ ...b, open: false })));
     n.msgs = c.msgs; n.ask = c.ask; n.reply = c.reply; n.ctx = c.ctx;
-    newTerm(n.title, n.id, [['cmd', `claude --resume ${c.id} --fork-session${skip()}`], ['dim', `Branched with the full context of “${c.title}”`], ['dim', '> Waiting for your reply']]);
+    newTerm(n.title, n.id, `claude --resume ${c.id} --fork-session${skip()}`);
     drawChats();
   };
 
@@ -740,7 +794,7 @@
     refresh: () => { const b = $('[data-act="refresh"]'); b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin'); drawChats(); toast(`${CHATS.filter((c) => !c.trashed).length} chats, read from local transcripts`); },
     board: () => open('board'),
     dash: () => open('dash'),
-    new: () => { const n = addChat('New chat', 'billing-api', 'wait', [{ t: 'ai', text: 'New session started. Waiting for your first message.' }]); newTerm('Claude', n.id, [['cmd', `claude --session-id ${n.id}${skip()}`], ['dim', 'Claude Code · billing-api'], ['dim', '> Waiting for your first message']]); drawChats(); open('chat:' + n.id); },
+    new: () => { const n = addChat('New chat', 'billing-api', 'wait', []); newTerm('Claude', n.id, `claude --session-id ${n.id}${skip()}`); drawChats(); open('chat:' + n.id); setTimeout(() => { const i = $('#dterm [data-cc]'); if (i) i.focus(); }, 50); },
   };
 
   demo.addEventListener('click', (e) => {
@@ -777,6 +831,7 @@
     else if (d.analytics) open('analytics:' + d.analytics);
     else if (d.export) { open('md:' + d.export); toast(`Exported ${slug(chat(d.export).title)}.md`); }
     else if (d.agent) open('agent:' + d.agent);
+    else if (d.fold) { const [id, i] = d.fold.split(':'); const b = chat(id).blocks[Number(i)]; b.open = !b.open; drawEditor(); }
     else if (d.diff) open('diff:' + d.diff);
     else if (d.unsplit !== undefined) { S.split = null; drawEditor(); }
     else if (d.copytext) { navigator.clipboard && navigator.clipboard.writeText(d.copytext).catch(() => {}); t.textContent = 'Copied'; setTimeout(() => { t.textContent = 'Copy'; }, 1200); }
@@ -799,6 +854,10 @@
   demo.addEventListener('input', (e) => {
     if (e.target.id === 'dq-in') { S.q = e.target.value.trim().toLowerCase(); drawChats(); stage.classList.add('picked'); }
     if (e.target.id === 'dmem-in') { S.memQ = e.target.value.trim(); drawMemory(); }
+  });
+  demo.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (t.dataset && t.dataset.cc && e.key === 'Enter') { e.preventDefault(); sendFromTerm(t.dataset.cc, t.value); }
   });
   demo.addEventListener('mouseover', (e) => { const b = e.target.closest('[data-day]'); if (b) showDay(Number(b.dataset.day)); });
   demo.addEventListener('contextmenu', (e) => {
@@ -825,13 +884,29 @@
   // ---------------------------------------------------------------- guided tour
   // Until the visitor touches the demo, the "You" cursor shows a few features in turn.
   const youCur = stage.querySelector('.cursor.you');
+  const TOUR_CHAT = 'c9e04b17';
+  const TOUR_MSG = 'Add a test for the 429.';
+  let typedOnce = false;
+  // Types into a terminal without taking focus, so the visitor's own focus is left alone
+  const typeIn = (el) => {
+    typedOnce = true;
+    let n = 0;
+    const tick = () => {
+      if (!tour || !el.isConnected) return;
+      el.value = TOUR_MSG.slice(0, ++n);
+      if (n < TOUR_MSG.length) setTimeout(tick, 45);
+      else setTimeout(() => { if (tour) sendFromTerm(TOUR_CHAT, TOUR_MSG); }, 350);
+    };
+    tick();
+  };
   const STEPS = [
-    ['.lb-open[data-open="7b31d0aa"]', (el) => el.click()],
-    ['.lb-tab[data-tab="card"]', (el) => el.click()],
-    ['[data-act="board"]', (el) => el.click()],
-    ['.lb-tab[data-tab="digest"]', (el) => el.click()],
-    ['.lb-tab[data-tab="chats"]', (el) => el.click()],
-    ['.lb-open[data-open="4f2a9c1e"]', (el) => el.click()],
+    { q: '.lb-tab[data-tab="chats"]', when: () => S.tab !== 'chats', wait: 1800 },
+    { q: `.lb-open[data-open="${TOUR_CHAT}"]`, wait: 2600 },
+    { q: `#dpanes [data-resume="${TOUR_CHAT}"]`, wait: 4200 },
+    { q: `#dterm [data-cc="${TOUR_CHAT}"]`, when: () => !typedOnce, run: typeIn, wait: 6500 },
+    { q: '.lb-tab[data-tab="card"]', wait: 2800 },
+    { q: '[data-act="board"]', wait: 2800 },
+    { q: '.lb-tab[data-tab="digest"]', wait: 2800 },
   ];
   let tour = null, step = 0, idle = null, touring = false, onScreen = false;
   // Where the real pointer is. A mouse that the page scrolls away from never fires
@@ -844,13 +919,15 @@
   };
   const tourStep = () => {
     // Skip steps whose target the visitor has hidden (a search, a collapsed folder), so the cursor never stalls
-    let el = null, run = null;
+    let el = null, st = null;
     for (let tries = 0; tries < STEPS.length && !el; tries++) {
-      const [q, fn] = STEPS[step++ % STEPS.length];
-      const found = $(q);
-      if (found && found.getClientRects().length) { el = found; run = fn; }
+      const cand = STEPS[step++ % STEPS.length];
+      if (cand.when && !cand.when()) continue;
+      const found = $(cand.q);
+      if (found && found.getClientRects().length && !found.disabled) { el = found; st = cand; }
     }
-    if (!el) return;
+    if (!el) return 1200;
+    const run = st.run || ((x) => x.click());
     const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
     youCur.style.left = r.left - s.left + Math.min(r.width * 0.5, 120) + 'px';
     youCur.style.top = r.top - s.top + r.height * 0.55 + 'px';
@@ -862,17 +939,20 @@
       stage.classList.remove('picked');
       youCur.classList.add('clicking'); setTimeout(() => youCur.classList.remove('clicking'), 250);
     }, 1300);
+    return st.wait;
   };
   function stopTour () {
     if (touring) return;
-    clearInterval(tour); tour = null; clearTimeout(idle);
+    clearTimeout(tour); tour = null; clearTimeout(idle);
     stage.classList.remove('touring');
     $$('.hov').forEach((x) => x.classList.remove('hov'));
   }
   const startTour = () => {
     if (tour || !onScreen || pointerInside()) return;
     stage.classList.remove('user-in');
-    stage.classList.add('touring'); tourStep(); tour = setInterval(tourStep, 2800);
+    stage.classList.add('touring');
+    const next = () => { tour = setTimeout(next, tourStep()); };
+    tour = true; next();
   };
   // The visitor has the demo while they're in it; the tour picks up again shortly after they leave.
   // A tap has no "leave", so on touch screens it waits longer before taking over again.
