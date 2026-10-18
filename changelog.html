@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Logbook Changelog: every release</title>
+  <meta name="description" content="Every Agent Logbook release, newest first: what's new, what got better and what was fixed.">
+  <link rel="canonical" href="https://ragulsundaram.github.io/agent-logbook-site/changelog.html">
+  <link rel="icon" href="icon.png">
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="icon.png" alt="">Agent Logbook</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html#what">What it does</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="changelog.html" aria-current="page">Changelog</a>
+      <a href="index.html#faq">Help</a>
+    </nav>
+    <div class="get-menu">
+      <button class="btn solid sm" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="get-menu-list">Get it free<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="get-menu-list" id="get-menu-list" role="menu" hidden>
+        <a role="menuitem" href="https://marketplace.visualstudio.com/items?itemName=ragulsundaram.agent-logbook" target="_blank" rel="noopener"><img src="images/logos/vscode.svg" alt="" width="24" height="24"><span><strong>VS Code</strong><small>Visual Studio Marketplace</small></span></a>
+        <a role="menuitem" href="https://open-vsx.org/extension/ragulsundaram/agent-logbook" target="_blank" rel="noopener"><img class="mono" src="images/logos/cursor.svg" alt="" width="24" height="24"><span><strong>Cursor, Windsurf, VSCodium</strong><small>Open VSX</small></span></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="cl">
+  <div class="wrap">
+    <div class="cl-head">
+      <div class="kicker">Changelog</div>
+      <h1>Every release, newest first.</h1>
+      <p>What's new, what got better and what was fixed. Your editor updates the extension on its own; this is what changed.</p>
+      <div class="cl-filter" role="group" aria-label="Show">
+        <button type="button" aria-pressed="true" data-kind="all">All</button>
+        <button type="button" aria-pressed="false" data-kind="new"><i class="k new"></i>New</button>
+        <button type="button" aria-pressed="false" data-kind="improved"><i class="k improved"></i>Improved</button>
+        <button type="button" aria-pressed="false" data-kind="fixed"><i class="k fixed"></i>Fixed</button>
+      </div>
+    </div>
+
+    <ol class="timeline">
+      <li class="rel" id="v1.3.0">
+        <div class="rel-when"><a class="ver" href="#v1.3.0">1.3.0</a><time datetime="2026-10-17">Oct 17, 2026</time><span class="latest">Latest</span></div>
+        <div class="rel-body">
+          <h2>Live chats, and use it or lose it</h2>
+          <ul>
+            <li data-kind="new"><b class="tagk new">New</b><span><strong>Live chats:</strong> every running chat on one page, working or waiting for you, with your last ask and its latest reply ready to copy. Cards rise to the top as messages arrive.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span><strong>Use it or lose it:</strong> a quota bar that is about to reset with plenty left, or on course to run out first, is flagged under the bars, on the live board and in the status bar.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span><strong>Panel layouts:</strong> chats can sit side by side in the terminal panel, at the bottom or on the right.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Open any chat straight into a split, running or not.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Opening a chat starts as soon as the pointer rests on it, so the click is instant.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Refresh moved to the panel's title bar.</span></li>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>Placing a chat in a split no longer closes another pane, and the chat running in it.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.2.2">
+        <div class="rel-when"><a class="ver" href="#v1.2.2">1.2.2</a><time datetime="2026-10-15">Oct 15, 2026</time></div>
+        <div class="rel-body">
+          <h2>Resume finds the right terminal</h2>
+          <ul>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>Resume finds a chat's terminal when the editor was opened from the Dock, where it could not see the <code>claude</code> command and opened a second terminal instead.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Long chats open straight away: the latest messages are drawn first and older ones as you scroll up.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Opening a chat from a search result is faster.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.2.1">
+        <div class="rel-when"><a class="ver" href="#v1.2.1">1.2.1</a><time datetime="2026-10-15">Oct 15, 2026</time></div>
+        <div class="rel-body">
+          <h2>The 1M window, from the start</h2>
+          <ul>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>Chats on a 1M context model show the 1M window from the start, rather than 200K until they pass it.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.2.0">
+        <div class="rel-when"><a class="ver" href="#v1.2.0">1.2.0</a><time datetime="2026-10-14">Oct 14, 2026</time></div>
+        <div class="rel-body">
+          <h2>What each chat costs your laptop</h2>
+          <ul>
+            <li data-kind="new"><b class="tagk new">New</b><span>See what each running chat costs your laptop: memory and CPU for Claude and every command it started, with a warning when one gets heavy.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Catch commands Claude left running after a chat ended, and stop them from the panel.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>The chat footer is grouped into Claude (context, cache, cost) and Laptop (memory, CPU), and lines up when the panel is narrow.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.1.1">
+        <div class="rel-when"><a class="ver" href="#v1.1.1">1.1.1</a><time datetime="2026-10-13">Oct 13, 2026</time></div>
+        <div class="rel-body">
+          <h2>A memory leak, fixed</h2>
+          <ul>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>A chat with screenshots left a full copy of itself in memory every time it was redrawn, so memory could climb into gigabytes over a long session. Measured on a chat with 277 screenshots, it now stays flat.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.1.0">
+        <div class="rel-when"><a class="ver" href="#v1.1.0">1.1.0</a><time datetime="2026-10-13">Oct 13, 2026</time></div>
+        <div class="rel-body">
+          <h2>Chat layouts, and search a hundred times faster</h2>
+          <ul>
+            <li data-kind="new"><b class="tagk new">New</b><span><strong>Chat layouts:</strong> open chats in a fixed spot of the editor (halves, thirds, a stack or a grid) and move any open chat with a command or the chat list's right-click menu.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Resume straight from a search result.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>A runner shows inside an open chat while Claude is working, and stops the moment it finishes.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Search is around a hundred times faster, built on an index instead of re-reading every transcript.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Resume opens without a pause.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Renaming a chat renames a running session and its terminal tab; tabs follow the chat's title.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Copied messages keep real bullet and numbered lists in Slack.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Notices from background agents and other sessions show as notes, with the agent's report, rather than as your messages.</span></li>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Live chats redraw only what changed, so the view keeps up with the terminal.</span></li>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>A finished chat no longer shows as working.</span></li>
+            <li data-kind="fixed"><b class="tagk fixed">Fixed</b><span>Token and cost counts no longer double-count replies, and sub-agent usage is included.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel" id="v1.0.1">
+        <div class="rel-when"><a class="ver" href="#v1.0.1">1.0.1</a><time datetime="2026-10-06">Oct 6, 2026</time></div>
+        <div class="rel-body">
+          <h2>Store links</h2>
+          <ul>
+            <li data-kind="improved"><b class="tagk improved">Improved</b><span>Homepage and issue links point to the public project page.</span></li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="rel first" id="v1.0.0">
+        <div class="rel-when"><a class="ver" href="#v1.0.0">1.0.0</a><time datetime="2026-10-05">Oct 5, 2026</time></div>
+        <div class="rel-body">
+          <h2>First public release</h2>
+          <ul>
+            <li data-kind="new"><b class="tagk new">New</b><span>Read, search and resume Claude Code and Codex sessions, grouped by project.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Sub-agents shown where they were launched, as a tree, each openable as its own thread.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>A dashboard over your whole history: tokens, cost, cache efficiency, models, projects, files, hours.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Per-chat stats, including context growth and prompt-cache expiry.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>A shareable PNG usage card.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Plan-usage bars across the top of the panel, chosen in Settings.</span></li>
+            <li data-kind="new"><b class="tagk new">New</b><span>Groups, pins, archive and rename. A rename reaches a session that is running in a terminal.</span></li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+    <p class="cl-empty" hidden>Nothing of that kind yet.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="icon.png" alt="">Agent Logbook</a>
+    <span>© 2026 Ragul Sundaram</span>
+    <nav aria-label="Footer">
+      <a href="index.html#faq">Help</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="https://github.com/Ragulsundaram/agent-logbook/issues" target="_blank" rel="noopener">Issues</a>
+      <a href="mailto:ragulsundaram15@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav border once the page scrolls.
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Filter by kind of change; a release with nothing of that kind steps out of the timeline.
+  const chips = document.querySelectorAll('.cl-filter button');
+  chips.forEach((b) => b.addEventListener('click', () => {
+    const kind = b.dataset.kind;
+    chips.forEach((c) => c.setAttribute('aria-pressed', c === b));
+    let any = false;
+    document.querySelectorAll('.rel').forEach((rel) => {
+      let shown = 0;
+      rel.querySelectorAll('li[data-kind]').forEach((li) => { const on = kind === 'all' || li.dataset.kind === kind; li.hidden = !on; if (on) shown++; });
+      rel.hidden = !shown;
+      if (shown) any = true;
+    });
+    document.querySelector('.cl-empty').hidden = any;
+  }));
+</script>
+<script src="get-menu.js"></script>
+</body>
+</html>
