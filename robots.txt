@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ragulsundaram.github.io/agent-logbook-site/sitemap.xml
