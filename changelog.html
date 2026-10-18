@@ -231,11 +231,22 @@
   </div>
 </footer>
 
+<button class="to-top" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
 <script>
   // Sticky nav border once the page scrolls.
   const nav = document.getElementById('nav');
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  // Back to top shows after one screen and rides up with the footer's top edge.
+  const toTop = document.querySelector('.to-top');
+  const footer = document.querySelector('footer.site');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+    toTop.classList.toggle('show', window.scrollY > window.innerHeight);
+    toTop.style.setProperty('--lift', Math.max(0, window.innerHeight - footer.getBoundingClientRect().top) + 'px');
+  };
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0 }));
   onScroll();
 
   // Filter by kind of change; a release with nothing of that kind steps out of the timeline.
@@ -251,6 +262,7 @@
       if (shown) any = true;
     });
     document.querySelector('.cl-empty').hidden = any;
+    onScroll();
   }));
 </script>
 <script src="get-menu.js"></script>
