@@ -778,31 +778,53 @@ code { font: 600 .85em/1 var(--font-mono); background: var(--soft); border: 1px 
 .ticks li { display: flex; gap: 12px; align-items: flex-start; }
 .ticks li::before { content: ""; flex: none; width: 22px; height: 22px; margin-top: 2px; border-radius: 50%; background: var(--c) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/14px no-repeat; }
 
-/* For your agents: a chat asking the logbook, and the activity log under it */
-.mcp { position: absolute; left: 48px; right: 48px; top: 56px; max-width: 480px; display: grid; gap: 14px; }
-.mcp-term { padding: 18px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); display: grid; gap: 12px; font-size: 13px; box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--c) 45%, transparent); }
-.mcp-you { justify-self: end; max-width: 85%; padding: 8px 12px; border-radius: 12px 12px 4px 12px; background: var(--bg); border: 1px solid var(--line); font-weight: 600; }
-.mcp-tool { display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--c) 12%, transparent); color: var(--accent-4-ink); font-size: 11.5px; font-weight: 650; font-family: var(--mono, ui-monospace, monospace); }
-.mcp-tool svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
-.mcp-reply { max-width: 92%; padding: 10px 12px; border-radius: 12px 12px 12px 4px; background: var(--bg); border: 1px solid var(--line); color: var(--ink-2); line-height: 1.5; }
-.mcp-reply b { color: var(--ink); }
-.mcp-reply code { font-size: 11.5px; padding: 1px 5px; border-radius: 5px; background: var(--soft); border: 1px solid var(--line); color: var(--ink); }
-.mcp-log { padding: 14px 16px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); font-size: 12px; }
-.mcp-log header { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--line); font-weight: 700; font-size: 11.5px; color: var(--ink-2); letter-spacing: .02em; text-transform: uppercase; }
-.mcp-log header svg { width: 14px; height: 14px; fill: none; stroke: var(--accent-4-ink); stroke-width: 2; }
-.mcp-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; }
-.mcp-row span { font-weight: 600; white-space: nowrap; }
-.mcp-row em { font-style: normal; color: var(--ink-2); text-align: right; }
-.mcp-row.dim { opacity: .55; }
-/* plays like a conversation when the panel scrolls in: ask, lookup, answer, log */
-#agents-panel.play .mcp-you { animation: row-in .5s var(--ease) .1s both; }
-#agents-panel.play .mcp-tool { animation: row-in .5s var(--ease) .7s both; }
-#agents-panel.play .mcp-reply { animation: row-in .5s var(--ease) 1.4s both; }
-#agents-panel.play .mcp-log { animation: row-in .6s var(--ease) 2s both; }
-#agents-panel.play .mcp-row { animation: row-in .4s var(--ease) backwards; }
-#agents-panel.play .mcp-row:nth-of-type(1) { animation-delay: 2.2s; }
-#agents-panel.play .mcp-row:nth-of-type(2) { animation-delay: 2.35s; }
-#agents-panel.play .mcp-row:nth-of-type(3) { animation-delay: 2.5s; }
+/* MCP server: old chats at the top, the logbook in the middle, a new chat pulling an answer up out of an old one */
+.mc { position: absolute; inset: 36px 40px; margin: 0 auto; max-width: 520px; display: flex; flex-direction: column; justify-content: center; font-size: 12px; }
+.mc-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
+.mc-past { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mc-old { min-width: 0; padding: 9px 11px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); display: grid; gap: 2px; transition: none; }
+.mc-old b, .mc-old span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-old b { font-weight: 650; }
+.mc-old span { font-size: 10.5px; color: var(--ink-2); }
+.mc-fork { position: relative; height: 14px; margin: 0 16.66%; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; }
+.mc-fork::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.mc-wire { position: relative; align-self: center; width: 1px; height: 26px; background: var(--line); }
+.mc-wire span { position: absolute; left: -3.5px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); opacity: 0; }
+.mc-hub { align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px; background: var(--soft); border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line)); font-size: 12.5px; }
+.mc-hub img { width: 22px; height: 22px; border-radius: 6px; }
+.mc-hub span { color: var(--ink-2); font-size: 11px; }
+.mc-chat { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--soft); border: 1px solid var(--line); box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--c) 45%, transparent); }
+.mc-chat header { display: flex; align-items: center; gap: 6px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.mc-chat header b { margin-right: auto; }
+.mc-chat header span { padding: 2px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 650; color: var(--accent-1-ink); background: color-mix(in srgb, var(--accent-1) 12%, transparent); }
+.mc-chat header span.codex { color: var(--accent-3-ink); background: color-mix(in srgb, var(--accent-3) 12%, transparent); }
+.mc-you { justify-self: end; padding: 7px 11px; border-radius: 11px 11px 3px 11px; background: var(--bg); border: 1px solid var(--line); font-weight: 600; }
+.mc-tool { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 7px; background: color-mix(in srgb, var(--c) 12%, transparent); color: var(--accent-4-ink); font: 650 11px/1.4 var(--mono, ui-monospace, monospace); }
+.mc-tool svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
+.mc-reply { justify-self: start; max-width: 94%; padding: 8px 11px; border-radius: 11px 11px 11px 3px; background: var(--bg); border: 1px solid color-mix(in srgb, var(--c) 40%, var(--line)); color: var(--ink-2); line-height: 1.5; }
+.mc-reply small { display: block; font-size: 10.5px; font-weight: 700; color: var(--accent-4-ink); }
+.mc-reply code { font-size: 11px; padding: 1px 5px; border-radius: 5px; background: var(--soft); border: 1px solid var(--line); color: var(--ink); }
+
+/* one 8s loop while on screen: ask, the request climbs to the logbook and on to the old chat,
+   the answer comes back down into the new chat */
+#agents-panel.play .mc-you { animation: mc-ask 8s var(--ease) infinite; }
+#agents-panel.play .mc-tool { animation: mc-tool 8s var(--ease) infinite; }
+#agents-panel.play .mc-reply { animation: mc-reply 8s var(--ease) infinite; }
+#agents-panel.play .mc-wire.bottom .up { animation: mc-up-a 8s linear infinite; }
+#agents-panel.play .mc-wire.top .up { animation: mc-up-b 8s linear infinite; }
+#agents-panel.play .mc-wire.top .down { animation: mc-down-a 8s linear infinite; }
+#agents-panel.play .mc-wire.bottom .down { animation: mc-down-b 8s linear infinite; }
+#agents-panel.play .mc-hub { animation: mc-hub 8s ease infinite; }
+#agents-panel.play .mc-old.hit { animation: mc-hit 8s ease infinite; }
+@keyframes mc-ask { 0% { opacity: 0; transform: translateY(6px); } 6%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+@keyframes mc-tool { 0%, 12% { opacity: 0; transform: translateY(6px); } 18%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+@keyframes mc-reply { 0%, 72% { opacity: 0; transform: translateY(6px); } 78%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; } }
+@keyframes mc-up-a { 0%, 18% { top: 100%; opacity: 0; } 20% { opacity: 1; } 28% { top: -4px; opacity: 1; } 30%, 100% { top: -4px; opacity: 0; } }
+@keyframes mc-up-b { 0%, 34% { top: 100%; opacity: 0; } 36% { opacity: 1; } 44% { top: -4px; opacity: 1; } 46%, 100% { top: -4px; opacity: 0; } }
+@keyframes mc-down-a { 0%, 56% { top: -4px; opacity: 0; } 58% { opacity: 1; } 64% { top: 100%; opacity: 1; } 66%, 100% { top: 100%; opacity: 0; } }
+@keyframes mc-down-b { 0%, 64% { top: -4px; opacity: 0; } 66% { opacity: 1; } 72% { top: 100%; opacity: 1; } 74%, 100% { top: 100%; opacity: 0; } }
+@keyframes mc-hub { 0%, 26%, 74%, 100% { box-shadow: none; } 30%, 66% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent), 0 0 24px color-mix(in srgb, var(--c) 35%, transparent); } }
+@keyframes mc-hit { 0%, 42%, 70%, 100% { border-color: var(--line); background: var(--bg); } 46%, 62% { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--bg)); } }
 
 /* Live chats board: a card per running chat; the newest message rises to the top */
 /* Inset on both sides so the second column fits whatever width the panel art gets */
@@ -1183,7 +1205,10 @@ footer.site nav a:hover { color: var(--ink); }
   .panel-art { order: 1; border-block: 1px solid var(--line); }
   .panel-art { min-height: 400px; }
   .board { left: 24px; right: 24px; top: 32px; }
-  .mcp { left: 24px; right: 24px; top: 32px; }
+  .mc { inset: 28px 20px; }
+  .mc-past { gap: 6px; }
+  .mc-old { padding: 8px 9px; }
+  .mc-old b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 11.5px; line-height: 1.3; }
   #agents .panel-art { min-height: 440px; }
   .quota { left: 24px; top: 40px; }
   .q-status { left: 24px; }
