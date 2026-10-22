@@ -41,7 +41,7 @@
       <a href="./">Agent Logbook</a><span class="sep">→</span><a class="here" href="privacy" aria-current="page">Privacy</a>
     </nav>
     <h1>What Agent Logbook reads and writes</h1>
-    <div class="byline"><span>Last updated: October 18, 2026</span><span>Version 1.4.1</span></div>
+    <div class="byline"><span>Last updated: October 22, 2026</span><span>Version 1.5.0</span></div>
     <p class="lede">It's worth being explicit, because a couple of these would look alarming if you found them rather than read them here.</p>
 
     <details class="toc-mobile"><summary>On this page</summary><ol></ol></details>
@@ -53,6 +53,7 @@
         <li>There's no account, no server of its own, and no analytics or telemetry.</li>
         <li>It makes one request on its own: your plan usage from Anthropic, the same request Claude Code makes.</li>
         <li>It writes its own cache and settings under <code>~/.claude</code>. It changes your chat files only when you rename one.</li>
+        <li>The MCP server is off until you connect it. Once it's on, an agent can read your past chats, and what it reads goes to that agent's model like the rest of its conversation.</li>
       </ul>
 
       <h2 id="reads">What it reads</h2>
@@ -64,6 +65,7 @@
           <tr><td>Codex sessions</td><td><code>~/.codex/sessions</code></td><td>Codex chats and Codex quota, which is recorded inside each session</td></tr>
           <tr><td>Memory notes and instructions</td><td><code>~/.claude/**/memory</code>, <code>~/.codex/memories</code>, <code>~/.claude/CLAUDE.md</code>, <code>~/.codex/AGENTS.md</code></td><td>The Memory tab</td></tr>
           <tr><td>Which chats are running</td><td>The Claude CLI's own list (<code>claude agents --json</code>) and the process list</td><td>Live dots, the live board, memory and CPU per chat</td></tr>
+          <tr><td>The MCP activity log</td><td><code>~/.agent-logbook/activity.jsonl</code></td><td>The Agents tab: which chat looked up what</td></tr>
           <tr><td>Your Claude login token</td><td>The macOS Keychain, or <code>~/.claude/.credentials.json</code> on Linux and Windows</td><td>Only to ask for your plan usage (next section)</td></tr>
         </tbody>
       </table></div>
@@ -86,6 +88,9 @@
           <tr><td><code>~/.claude/chistory-briefs/</code></td><td>When you use Branch with a brief: the brief, left for you to read or edit</td></tr>
           <tr><td>Your export folder</td><td>When you export a chat to Markdown, if you've set one in Settings</td></tr>
           <tr><td>Your system's temp folder</td><td>Briefly, when you copy the usage card or open an image from a chat</td></tr>
+          <tr><td><code>~/.agent-logbook/</code></td><td>When you connect the MCP server: a copy of the server, and the activity log it writes</td></tr>
+          <tr><td><code>~/.claude.json</code>, <code>~/.codex/config.toml</code></td><td>When you connect or disconnect the MCP server, through each CLI's own <code>mcp add</code> and <code>mcp remove</code>. A backup is saved next to each first</td></tr>
+          <tr><td><code>~/.claude/skills/agent-logbook/</code></td><td>When you connect Claude Code: a skill that tells Claude when to use the MCP server. Removed when you disconnect</td></tr>
         </tbody>
       </table></div>
 
@@ -95,6 +100,14 @@
 
       <h2 id="brief">Branch with a brief</h2>
       <p>This is the one feature that runs Claude for you. It writes a short summary of the old chat, then runs <code>claude -p</code> to turn it into a handover brief for the new chat. That uses your own Claude plan, and it only happens when you click it.</p>
+
+      <h2 id="mcp">The MCP server</h2>
+      <p>The MCP server lets Claude Code and Codex look things up in your past chats. It's off until you connect it in the Agents tab, and you can disconnect it there at any time.</p>
+      <p><strong>Where it runs.</strong> Your agent starts the server on your laptop and talks to it directly over standard input and output. It opens no port and makes no network requests.</p>
+      <p><strong>What an agent can do with it.</strong> Read only: list your chats, search them, pull one chat's context, see what a chat changed and which chats changed a file. It can't edit, delete or resume anything.</p>
+      <p><strong>Where the text goes.</strong> What an agent reads becomes part of that agent's conversation, and the agent sends its conversation to its model provider (Anthropic for Claude Code, OpenAI for Codex), as it does with everything else in the chat. So a lookup sends text from an old chat to that provider. Agent Logbook doesn't send it anywhere itself.</p>
+      <p><strong>Limits.</strong> "This project only" is on by default: an agent sees only chats from the folder it was started in. Known secret formats, such as API keys, access tokens, passwords and private keys, are hidden before anything is returned. Hiding works by pattern, so a secret in an unusual format can still get through. If that matters for a project, leave the server disconnected there.</p>
+      <p><strong>The log.</strong> Every lookup is written to <code>~/.agent-logbook/activity.jsonl</code> and shown in the Agents tab: which chat asked, which tool it used, and which chats it read. Only the request is logged, never the answer, with secrets hidden in it as well. The log keeps itself to about 2 MB, and Clear log empties it. To tell which chat is asking, the server checks its parent process with <code>claude agents --json</code>, <code>lsof</code> and <code>ps</code>.</p>
 
       <h2 id="never">What it never does</h2>
       <ul>
