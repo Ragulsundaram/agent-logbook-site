@@ -786,10 +786,10 @@ code { font: 600 .85em/1 var(--font-mono); background: var(--soft); border: 1px 
 .mc-old b, .mc-old span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mc-old b { font-weight: 650; }
 .mc-old span { font-size: 10.5px; color: var(--ink-2); }
-.mc-fork { position: relative; height: 14px; margin: 0 16.66%; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; }
-.mc-fork::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--line); }
-.mc-wire { position: relative; align-self: center; width: 1px; height: 26px; background: var(--line); }
-.mc-wire span { position: absolute; left: -3.5px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); opacity: 0; }
+.mc-fork { --wire: color-mix(in srgb, var(--c) 65%, transparent); position: relative; height: 14px; margin: 0 16.66%; border: 2px solid var(--wire); border-top: 0; border-radius: 0 0 8px 8px; }
+.mc-fork::before { content: ""; position: absolute; left: calc(50% - 1px); top: 0; bottom: 0; width: 2px; background: var(--wire); }
+.mc-wire { position: relative; align-self: center; width: 2px; height: 26px; background: color-mix(in srgb, var(--c) 65%, transparent); }
+.mc-wire span { position: absolute; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); opacity: 0; }
 .mc-hub { align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px; background: var(--soft); border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line)); font-size: 12.5px; }
 .mc-hub img { width: 22px; height: 22px; border-radius: 6px; }
 .mc-hub span { color: var(--ink-2); font-size: 11px; }
