@@ -27,6 +27,7 @@
 .prose { font-size: 17px; line-height: 1.7; }
 .prose > * + * { margin-top: 16px; }
 .prose p { margin: 0; }
+.prose > * + p { margin-top: 16px; }
 .prose h2 { font-family: var(--font-body); font-size: 26px; line-height: 1.25; letter-spacing: -0.015em; font-weight: 600; margin-top: 48px; scroll-margin-top: 96px; }
 .prose ul { padding-left: 1.4em; margin-bottom: 0; }
 .prose li + li { margin-top: 8px; }
