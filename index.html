@@ -263,8 +263,8 @@
       <div class="panel sage" id="agents-panel">
         <div>
           <div class="kicker">MCP server</div>
-          <h2>Your agents remember past chats.</h2>
-          <p class="lede">One click connects Claude Code and Codex to a local, read-only MCP server over your chat history, so a new chat picks up what an old one knew.</p>
+          <h2>Agents that remember.</h2>
+          <p class="lede">One click connects Claude Code and Codex to your chat history, so a new chat picks up what an old one knew.</p>
           <ul class="ticks">
             <li>Just ask: "how did I fix this last week?"</li>
             <li>Search chats, pull context, see what changed</li>
@@ -273,17 +273,22 @@
           </ul>
         </div>
         <div class="panel-art" aria-hidden="true">
-          <div class="mcp">
-            <div class="mcp-term">
-              <div class="mcp-you">How did I fix the flaky login test last week?</div>
-              <div class="mcp-tool"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/></svg>agent-logbook · search_sessions "flaky login"</div>
-              <div class="mcp-reply">Found it: <b>Fix the flaky login test</b> (Oct 15). You added <code>await cookieWritten(page)</code> in <code>auth.test.ts</code>. Apply the same fix here?</div>
+          <div class="mc">
+            <div class="mc-label">Past chats</div>
+            <div class="mc-past">
+              <div class="mc-old"><b>Move nightly jobs to a queue</b><span>billing-api · Oct 9</span></div>
+              <div class="mc-old hit"><b>Fix the flaky login test</b><span>billing-api · Oct 15</span></div>
+              <div class="mc-old"><b>Dark mode for the docs</b><span>marketing-site · Oct 18</span></div>
             </div>
-            <div class="mcp-log">
-              <header><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg>Activity · every lookup logged</header>
-              <div class="mcp-row"><span>Fix payment retries</span><em>searched "flaky login" · read 1 chat</em></div>
-              <div class="mcp-row"><span>Dark mode for the docs</span><em>read the context of 1 chat</em></div>
-              <div class="mcp-row dim"><span>Crash on cold start</span><em>asked which chats changed app.ts</em></div>
+            <div class="mc-fork"></div>
+            <div class="mc-wire top"><span class="up"></span><span class="down"></span></div>
+            <div class="mc-hub"><img src="icon.png" alt=""><b>Agent Logbook</b><span>MCP server</span></div>
+            <div class="mc-wire bottom"><span class="up"></span><span class="down"></span></div>
+            <div class="mc-chat">
+              <header><b>New chat</b><span>Claude Code</span><span class="codex">Codex</span></header>
+              <div class="mc-you">How did I fix the flaky login test?</div>
+              <div class="mc-tool"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/></svg>agent-logbook · search_sessions</div>
+              <div class="mc-reply"><small>From "Fix the flaky login test" · Oct 15</small>Wait for the cookie before reading the session: <code>await cookieWritten(page)</code></div>
             </div>
           </div>
         </div>
@@ -616,10 +621,10 @@
     }, { threshold: 0.4 }).observe(board);
   }
 
-  // The agents conversation and the quota bars play once their panel scrolls into view.
+  // The agents diagram loops while on screen; the quota bars fill once.
   const agentsPanel = document.getElementById('agents-panel');
   if (agentsPanel && !reduced) {
-    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { agentsPanel.classList.add('play'); io.disconnect(); } }, { threshold: 0.4 }).observe(agentsPanel);
+    new IntersectionObserver(([e]) => agentsPanel.classList.toggle('play', e.isIntersecting), { threshold: 0.3 }).observe(agentsPanel);
   }
   const quotaPanel = document.getElementById('quota-panel');
   if (!reduced) {
