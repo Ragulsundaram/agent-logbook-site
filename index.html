@@ -22,7 +22,7 @@
     <nav class="nav-links" aria-label="Main">
       <a href="#what">What it does</a>
       <a href="#how">How it works</a>
-      <a href="#agents">For agents</a>
+      <a href="#agents">MCP server</a>
       <a href="#live">Live chats</a>
       <a href="#features">Features</a>
       <a href="changelog">Changelog</a>
@@ -262,14 +262,14 @@
     <div class="wrap">
       <div class="panel sage" id="agents-panel">
         <div>
-          <div class="kicker">For your agents</div>
+          <div class="kicker">MCP server</div>
           <h2>Your agents remember past chats.</h2>
-          <p class="lede">One click connects Claude Code and Codex to a local, read-only MCP server over your chat history. A new chat can find how you fixed something last week and carry on from there, instead of starting cold.</p>
+          <p class="lede">One click connects Claude Code and Codex to a local, read-only MCP server over your chat history, so a new chat picks up what an old one knew.</p>
           <ul class="ticks">
-            <li>Just ask: "how did I fix the login bug last week?"</li>
-            <li>Search what was said, pull a chat's context, see what it changed</li>
-            <li>Every lookup logged: which chat asked, and what it read</li>
-            <li>Scope it to one project, known secret formats redacted, nothing leaves your machine</li>
+            <li>Just ask: "how did I fix this last week?"</li>
+            <li>Search chats, pull context, see what changed</li>
+            <li>Every lookup logged · scope it to one project</li>
+            <li>Secrets redacted, nothing leaves your machine</li>
           </ul>
         </div>
         <div class="panel-art" aria-hidden="true">
@@ -277,7 +277,7 @@
             <div class="mcp-term">
               <div class="mcp-you">How did I fix the flaky login test last week?</div>
               <div class="mcp-tool"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/></svg>agent-logbook · search_sessions "flaky login"</div>
-              <div class="mcp-reply">Found it: <b>Fix the flaky login test</b> (Oct 15). The test read the session before the cookie was written - you added <code>await cookieWritten(page)</code> in <code>auth.test.ts</code>. Want me to apply the same fix here?</div>
+              <div class="mcp-reply">Found it: <b>Fix the flaky login test</b> (Oct 15). You added <code>await cookieWritten(page)</code> in <code>auth.test.ts</code>. Apply the same fix here?</div>
             </div>
             <div class="mcp-log">
               <header><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg>Activity · every lookup logged</header>
@@ -616,7 +616,11 @@
     }, { threshold: 0.4 }).observe(board);
   }
 
-  // Quota bars fill once the panel scrolls into view.
+  // The agents conversation and the quota bars play once their panel scrolls into view.
+  const agentsPanel = document.getElementById('agents-panel');
+  if (agentsPanel && !reduced) {
+    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { agentsPanel.classList.add('play'); io.disconnect(); } }, { threshold: 0.4 }).observe(agentsPanel);
+  }
   const quotaPanel = document.getElementById('quota-panel');
   if (!reduced) {
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { quotaPanel.classList.add('play'); io.disconnect(); } }, { threshold: 0.4 }).observe(quotaPanel);
