@@ -269,7 +269,7 @@
             <li>Just ask: "how did I fix this last week?"</li>
             <li>Search chats, pull context, see what changed</li>
             <li>Every lookup logged · scope it to one project</li>
-            <li>Secrets redacted, nothing leaves your machine</li>
+            <li>Off until you connect it · known secret formats hidden</li>
           </ul>
         </div>
         <div class="panel-art" aria-hidden="true">
@@ -472,6 +472,7 @@
             <li>One request of its own: your plan usage, the same one Claude Code makes</li>
             <li>Deleting a chat moves it to a trash folder; nothing is wiped</li>
             <li>Branch with a brief runs Claude on your plan, only when you click it</li>
+            <li>The MCP server is off until you connect it, and runs only on your laptop</li>
           </ul>
           <p class="more"><a href="privacy">See everything it reads and writes →</a></p>
         </div>
@@ -545,6 +546,14 @@
         <details>
           <summary>Does it change my chat files?</summary>
           <div class="answer"><p>Only in two ways, both on purpose. Renaming a Claude chat adds a title line to its transcript, which is how Claude Code reads the new name. Deleting a chat moves the file to <code>~/.claude/trashed-sessions</code> instead of wiping it. Everything else it writes is its own cache and settings. <a href="privacy">The full list is here.</a></p></div>
+        </details>
+        <details>
+          <summary>What does the MCP server do?</summary>
+          <div class="answer"><p>It lets Claude Code and Codex look things up in your past chats. Turn it on in the Agents tab and a new chat can list your recent chats, search what was said, pull one chat's context to carry on its work, see what a chat changed, and find which chats changed a file. A skill is added for Claude Code, so you can just ask ("how did I fix this last week?") without naming a tool.</p><p>It's off until you connect it, it can only read, and every lookup is logged in the Agents tab: which chat asked and what it read. Disconnect any time from the same place.</p></div>
+        </details>
+        <details>
+          <summary>Does the MCP server send my chats anywhere?</summary>
+          <div class="answer"><p>The server itself doesn't: your agent starts it on your laptop, it talks to the agent directly and never goes online. But what an agent reads becomes part of that agent's conversation, and the agent sends its conversation to its model provider, as it does with everything else you show it. So text from an old chat reaches Anthropic or OpenAI only when an agent looks it up.</p><p>To keep that small, "This project only" (on by default) limits an agent to chats from the folder it was started in, and known secret formats such as API keys, tokens and passwords are hidden before anything is returned. Hiding works by pattern, so a secret in an unusual format can still get through. <a href="privacy#mcp">More on the privacy page.</a></p></div>
         </details>
         <details>
           <summary>Does the live board show Codex chats?</summary>
