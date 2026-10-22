@@ -22,6 +22,7 @@
     <nav class="nav-links" aria-label="Main">
       <a href="#what">What it does</a>
       <a href="#how">How it works</a>
+      <a href="#agents">For agents</a>
       <a href="#live">Live chats</a>
       <a href="#features">Features</a>
       <a href="changelog">Changelog</a>
@@ -250,6 +251,40 @@
           <div class="step-txt">
             <h3>Pick one back up</h3>
             <p>Open a chat to read it, or hit Resume. Branch starts a new chat from an old one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat history for your agents (MCP) -->
+  <section id="agents">
+    <div class="wrap">
+      <div class="panel sage" id="agents-panel">
+        <div>
+          <div class="kicker">For your agents</div>
+          <h2>Your agents remember past chats.</h2>
+          <p class="lede">One click connects Claude Code and Codex to a local, read-only MCP server over your chat history. A new chat can find how you fixed something last week and carry on from there, instead of starting cold.</p>
+          <ul class="ticks">
+            <li>Just ask: "how did I fix the login bug last week?"</li>
+            <li>Search what was said, pull a chat's context, see what it changed</li>
+            <li>Every lookup logged: which chat asked, and what it read</li>
+            <li>Scope it to one project, known secret formats redacted, nothing leaves your machine</li>
+          </ul>
+        </div>
+        <div class="panel-art" aria-hidden="true">
+          <div class="mcp">
+            <div class="mcp-term">
+              <div class="mcp-you">How did I fix the flaky login test last week?</div>
+              <div class="mcp-tool"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20.5 20.5"/></svg>agent-logbook · search_sessions "flaky login"</div>
+              <div class="mcp-reply">Found it: <b>Fix the flaky login test</b> (Oct 15). The test read the session before the cookie was written - you added <code>await cookieWritten(page)</code> in <code>auth.test.ts</code>. Want me to apply the same fix here?</div>
+            </div>
+            <div class="mcp-log">
+              <header><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg>Activity · every lookup logged</header>
+              <div class="mcp-row"><span>Fix payment retries</span><em>searched "flaky login" · read 1 chat</em></div>
+              <div class="mcp-row"><span>Dark mode for the docs</span><em>read the context of 1 chat</em></div>
+              <div class="mcp-row dim"><span>Crash on cold start</span><em>asked which chats changed app.ts</em></div>
+            </div>
           </div>
         </div>
       </div>
