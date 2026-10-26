@@ -161,7 +161,7 @@
     segs: [{ key: 'c5', label: '5h', name: 'Claude · 5h', pct: 38, color: '#d97757', resetMin: 130 }, { key: 'c7', label: '7d', name: 'Claude · 7d', pct: 31, color: '#d97757', resetMin: 9 * 60 }],
     spare: [{ key: 'o7', label: 'Opus 7d', name: 'Opus · 7d', pct: 12, color: '#8b6fd4', resetMin: 9 * 60 }, { key: 'x5', label: 'Codex 5h', name: 'Codex · 5h', pct: 54, color: '#5b8dd9', resetMin: 220 }],
     cfg: { limitAlerts: false, resetSoonWeeklyHours: 12, resetSoonMinutes: 30, unusedPercent: 30, boardAllWindows: false, layout: 'right-half', sort: 'recent', showLiveFirst: true, pageSize: 8, resumeTarget: 'auto', skipPermissions: false, exportSourceCopy: true },
-    alerted: false, dash: 'overview', dashDays: 30,
+    alerted: false, dash: 'spend', dashDays: 30,
   };
   const chat = (id) => CHATS.find((c) => c.id === id);
   const SWATCHES = ['#7fb069', '#5b8dd9', '#d9a441', '#c96a6a', '#8b6fd4', '#4fa8a8', '#d97757', '#8a8a8a'];
@@ -398,10 +398,10 @@
         ${opt('tiles', 'Sessions, messages, edits, time', 'The five small tiles')}
         ${opt('models', 'Models used', s.models.map((m) => m[0]).join(', '))}
         ${opt('chart', 'Tokens per day', `${s.days} day${s.days === 1 ? '' : 's'}`)}
-        ${opt('names', 'Project name', S.opts.names ? 'Shown on the card' : 'Hidden - the card names no project')}
+        ${opt('names', 'Project name', S.opts.names ? 'Shown on the card' : 'Left off the card')}
       </div>
       <div class="cardbtns"><button type="button" data-card="copy">${icon('copy')}<span>Copy image</span></button><button type="button" data-card="save">${icon('export')}<span>Save PNG…</span></button></div>
-      <p class="cardnote">Copy it to paste straight into a post, or save it as a PNG. This one is a sample with made-up numbers.</p>`;
+      <p class="cardnote">The image is 1200 by 675, the size X and Slack preview without cropping. This one is a sample with made-up numbers.</p>`;
     const paint = () => { const c = cardImage(); cardURL = c.toDataURL('image/png'); $('#dcard').src = cardURL; $('#dcard')._canvas = c; };
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(paint); else paint();
   };
@@ -415,7 +415,7 @@
     const c = $('#dcard')._canvas;
     if (!c || !navigator.clipboard || !window.ClipboardItem) { saveCard(); return; }
     c.toBlob((blob) => navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
-      .then(() => toast('Card copied. Paste it into a post or a chat.'))
+      .then(() => toast('Card copied - paste it anywhere'))
       .catch(() => saveCard()));
   };
 
@@ -526,7 +526,7 @@
         toggle('showLiveFirst', 'Running chats first', 'at the top of each folder') +
         number('pageSize', 'Chats per folder', 'before "Show more"', 1, 50))}
       ${section('play', 'Resuming', 'Where a chat reopens when you pick it up again.',
-        pick('resumeTarget', 'Resume opens in', 'Codex chats always go to a terminal', [['auto', 'Where the chat started'], ['terminal', 'A terminal in the editor'], ['claude', 'The Claude Code extension'], ['desktop', 'Claude Desktop']]) +
+        pick('resumeTarget', 'Resume opens in', 'Codex chats always go to a terminal', [['auto', 'Wherever it was first opened'], ['terminal', 'A terminal in the editor'], ['claude', 'The Claude Code extension'], ['desktop', 'Claude Desktop']]) +
         toggle('skipPermissions', 'Skip permission prompts', 'adds --dangerously-skip-permissions'))}
       ${section('export', 'Exporting', 'What a saved copy of a chat contains.', toggle('exportSourceCopy', 'Also write the raw transcript', 'a .source.jsonl next to the Markdown'))}
     </div>`;
@@ -550,7 +550,7 @@
         <button type="button" class="dbtn primary" data-resume="${c.id}">${icon('play')}<span>${c.src === 'codex' ? 'Resume' : resumeLabel[S.cfg.resumeTarget]}</span></button>
         ${c.src === 'codex' ? '' : `<button type="button" class="dbtn" data-branch="${c.id}" title="Branch: a new session carrying this chat's full context, like /branch">${icon('fork')}</button>
         <button type="button" class="dbtn" data-brief="${c.id}" title="Branch with a brief: a fresh session started from a written handover">${icon('brief')}</button>`}
-        <button type="button" class="dbtn" data-analytics="${c.id}" title="Session analytics">${icon('chart')}</button>
+        <button type="button" class="dbtn" data-analytics="${c.id}" title="Chat report">${icon('chart')}</button>
         <button type="button" class="dbtn" data-export="${c.id}" title="Export as Markdown">${icon('export')}</button>
         ${inSplit ? `<button type="button" class="dbtn" data-unsplit title="Close this split">${icon('close')}</button>` : ''}
       </div>
@@ -576,12 +576,12 @@
       const r = rng(99);
       const spend = Array.from({ length: S.dashDays }, () => Math.round(r() * 14 + (r() < 0.2 ? 0 : 2)));
       const heat = Array.from({ length: 52 * 7 }, () => { const x = r(); return x < 0.35 ? 0 : x < 0.6 ? 1 : x < 0.8 ? 2 : x < 0.93 ? 3 : 4; });
-      const tabs = [['overview', 'Overview'], ['models', 'Models'], ['plan', 'Plan usage']];
-      const body = S.dash === 'overview'
+      const tabs = [['spend', 'Spend'], ['tokens', 'Tokens &amp; models'], ['limits', 'Plan limits']];
+      const body = S.dash === 'spend'
         ? `<div class="kpis"><div><span>Spend at API prices</span><b>${money(S.dashDays === 7 ? 58.4 : S.dashDays === 30 ? 214.6 : 1486.3)}</b></div><div><span>Tokens</span><b>${S.dashDays === 7 ? '48.2M' : S.dashDays === 30 ? '171.5M' : '1.2B'}</b></div><div><span>Sessions</span><b>${S.dashDays === 7 ? 19 : S.dashDays === 30 ? 74 : 512}</b></div><div><span>Cache hit rate</span><b>89%</b></div></div>
           <div class="dpanel2"><div class="phead"><b>Spend per day</b><span>${S.dashDays} days</span></div>${bars(spend, Math.max(...spend))}</div>
           <div class="dpanel2"><div class="phead"><b>A year of activity</b><span>tokens per day</span></div><div class="heat">${heat.map((l) => `<i class="l${l}"></i>`).join('')}</div></div>`
-        : S.dash === 'models'
+        : S.dash === 'tokens'
           ? `<div class="dpanel2"><div class="phead"><b>By model</b><span>tokens · API price</span></div>${[['opus', 58, 158.2], ['sonnet', 36, 53.1], ['haiku', 6, 3.3]].map(([m, f, c]) => `<div class="dmodel"><div><b>${m}</b><span>${f}% · ${money(c)}</span></div><span class="dmbar"><i style="width:${f}%"></i></span></div>`).join('')}</div>`
           : `<div class="dpanel2"><div class="phead"><b>Plan usage</b><span>right now</span></div>${[...S.segs, ...S.spare].map((s) => `<div class="qr"><span>${esc(s.name)}</span><span class="bar"><b style="width:${s.pct}%;background:${s.color}"></b></span><em>${s.pct}%</em></div>`).join('')}</div>`;
       return { title: 'Dashboard', icon: 'chart', html: `<div class="dash-doc"><div class="dash-top"><div><h3>Claude Code dashboard</h3><p>Read from the transcripts on this machine. Nothing is uploaded.</p></div><div class="seg">${[[7, '7 days'], [30, '30 days'], [0, 'All time']].map(([d, l]) => `<button type="button" data-dashdays="${d || 365}" class="${S.dashDays === (d || 365) ? 'on' : ''}">${l}</button>`).join('')}</div></div>
@@ -593,11 +593,11 @@
       const ctx = Array.from({ length: c.msgs }, (_, i) => Math.round(20 + i * (60 / c.msgs) + r() * 8));
       const tools = [['Read', Math.round(4 + r() * 10)], ['Bash', Math.round(2 + r() * 8)], ['Edit', Math.round(1 + r() * 7)], ['Grep', Math.round(r() * 5)]];
       const tmax = Math.max(...tools.map((t) => t[1]));
-      return { title: `Analytics · ${c.title}`, icon: 'chart', html: `<div class="dash-doc"><div class="dash-top"><div><h3>Session analytics</h3><p>${esc(c.title)} · ${c.msgs} requests · ${money(c.cost)}</p></div></div>
+      return { title: `Report · ${c.title}`, icon: 'chart', html: `<div class="dash-doc"><div class="dash-top"><div><h3>Chat report</h3><p>${esc(c.title)} · ${c.msgs} requests · ${money(c.cost)}</p></div></div>
         <div class="kpis"><div><span>Requests</span><b>${c.msgs}</b></div><div><span>Model</span><b>${c.model}</b></div><div><span>Cache hits</span><b>${c.cache}%</b></div><div><span>Context now</span><b>${c.ctx.split(' ')[0]}</b></div></div>
         <div class="dpanel2"><div class="phead"><b>Context size at each reply</b><span>thousand tokens</span></div>${bars(ctx, 100, 'ctx')}</div>
-        <div class="dpanel2"><div class="phead"><b>Tools used</b><span>calls</span></div>${tools.map(([n, k]) => `<div class="dmodel"><div><b>${n}</b><span>${k}</span></div><span class="dmbar"><i style="width:${k / tmax * 100}%"></i></span></div>`).join('')}</div>
-        <div class="dpanel2"><div class="phead"><b>Stop reasons</b></div><div class="chips"><span class="chip on">end_turn · ${c.msgs - 3}</span><span class="chip">tool_use · 3</span></div></div></div>` };
+        <div class="dpanel2"><div class="phead"><b>Tools it ran</b><span>calls</span></div>${tools.map(([n, k]) => `<div class="dmodel"><div><b>${n}</b><span>${k}</span></div><span class="dmbar"><i style="width:${k / tmax * 100}%"></i></span></div>`).join('')}</div>
+        <div class="dpanel2"><div class="phead"><b>How Claude worked</b><span>why each reply ended</span></div><div class="chips"><span class="chip on">end_turn · ${c.msgs - 3}</span><span class="chip">tool_use · 3</span></div></div></div>` };
     },
     md: (id) => {
       const c = chat(id), f = slug(c.title);
